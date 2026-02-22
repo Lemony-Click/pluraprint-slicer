@@ -46,7 +46,7 @@ PrintHostSendDialog::PrintHostSendDialog(const fs::path &path, PrintHostPostUplo
     , combo_storage(storage_names.GetCount() > 1 ? new wxComboBox(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, storage_names, wxCB_READONLY) : nullptr)
     , post_upload_action(PrintHostPostUploadAction::None)
     , m_paths(storage_paths)
-    , m_switch_to_device_tab(switch_to_device_tab)
+    , m_switch_to_device_tab(true)
     , m_path(path)
     , m_post_actions(post_actions)
     , m_storage_names(storage_names)
@@ -109,21 +109,7 @@ void PrintHostSendDialog::init()
 
     txt_filename->SetValue(recent_path);
 
-    auto checkbox_sizer = new wxBoxSizer(wxHORIZONTAL);
-    auto checkbox       = new ::CheckBox(this, wxID_APPLY);
-    checkbox->SetValue(m_switch_to_device_tab);
-    checkbox->Bind(wxEVT_TOGGLEBUTTON, [this](wxCommandEvent& e) {
-        m_switch_to_device_tab = e.IsChecked();
-        e.Skip();
-    });
-    checkbox_sizer->Add(checkbox, 0, wxALL | wxALIGN_CENTER, FromDIP(2));
-
-    auto checkbox_text = new wxStaticText(this, wxID_ANY, _L("Switch to Device tab after upload."), wxDefaultPosition, wxDefaultSize, 0);
-    checkbox_sizer->Add(checkbox_text, 0, wxALL | wxALIGN_CENTER, FromDIP(2));
-    checkbox_text->SetFont(::Label::Body_13);
-    checkbox_text->SetForegroundColour(StateColor::darkModeColorFor(wxColour("#323A3D")));
-    content_sizer->Add(checkbox_sizer);
-    content_sizer->AddSpacer(VERT_SPACING);
+    // Always switch to device tab after upload (no checkbox needed)
 
     if (size_t extension_start = recent_path.find_last_of('.'); extension_start != std::string::npos)
         m_valid_suffix = recent_path.substr(extension_start);
@@ -717,23 +703,8 @@ void ElegooPrintHostSendDialog::init() {
 
     txt_filename->SetValue(recent_path);
 
-    {
-        auto checkbox_sizer = new wxBoxSizer(wxHORIZONTAL);
-        auto checkbox       = new ::CheckBox(this, wxID_APPLY);
-        checkbox->SetValue(m_switch_to_device_tab);
-        checkbox->Bind(wxEVT_TOGGLEBUTTON, [this](wxCommandEvent& e) {
-            m_switch_to_device_tab = e.IsChecked();
-            e.Skip();
-        });
-        checkbox_sizer->Add(checkbox, 0, wxALL | wxALIGN_CENTER, FromDIP(2));
+    // Always switch to device tab after upload (no checkbox needed)
 
-        auto checkbox_text = new wxStaticText(this, wxID_ANY, _L("Switch to Device tab after upload."), wxDefaultPosition, wxDefaultSize, 0);
-        checkbox_sizer->Add(checkbox_text, 0, wxALL | wxALIGN_CENTER, FromDIP(2));
-        checkbox_text->SetFont(::Label::Body_13);
-        checkbox_text->SetForegroundColour(StateColor::darkModeColorFor(wxColour("#323A3D")));
-        content_sizer->Add(checkbox_sizer);
-        content_sizer->AddSpacer(VERT_SPACING);
-    }
     warning_text = new wxStaticText(this, wxID_ANY,
                                     _L("The selected bed type does not match the file. Please confirm before starting the print."),
                                     wxDefaultPosition, wxDefaultSize, 0);

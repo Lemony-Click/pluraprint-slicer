@@ -1820,20 +1820,14 @@ wxBoxSizer* MainFrame::create_side_tools()
                 // Creating buttons as children of the popup but not adding them
                 // to the sizer causes them to appear at (0,0) — the visual bug.
                 bool support_send = true;
-                bool support_print_all = true;
+                bool support_print_all = false;
 
                 const auto preset_bundle = wxGetApp().preset_bundle;
                 if (preset_bundle) {
                     if (preset_bundle->use_bbl_network()) {
                         // BBL network support everything
                     } else {
-                        support_send = false; // All 3rd print hosts do not have the send options
-
-                        auto cfg = preset_bundle->printers.get_edited_preset().config;
-                        const auto host_type = cfg.option<ConfigOptionEnum<PrintHostType>>("host_type")->value;
-
-                        // Only simply print support uploading all plates
-                        support_print_all = host_type == PrintHostType::htSimplyPrint;
+                        support_send = false; // 3rd party print hosts do not have the send options
                     }
                 }
 
@@ -3932,9 +3926,6 @@ void MainFrame::load_printer_url()
     auto     cfg = preset_bundle.printers.get_edited_preset().config;
     wxString url = cfg.opt_string("print_host_webui").empty() ? cfg.opt_string("print_host") : cfg.opt_string("print_host_webui");
     wxString apikey;
-    const auto host_type = cfg.option<ConfigOptionEnum<PrintHostType>>("host_type")->value;
-    if (cfg.has("printhost_apikey") && (host_type == htPrusaLink || host_type == htPrusaConnect))
-        apikey = cfg.opt_string("printhost_apikey");
     if (!url.empty()) {
         if (!url.Lower().starts_with("http"))
             url = wxString::Format("http://%s", url);

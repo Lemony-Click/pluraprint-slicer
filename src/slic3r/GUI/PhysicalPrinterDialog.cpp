@@ -38,7 +38,6 @@
 #include "BonjourDialog.hpp"
 #include "MsgDialog.hpp"
 #include "OAuthDialog.hpp"
-#include "SimplyPrint.hpp"
 
 namespace Slic3r {
 namespace GUI {
@@ -180,25 +179,12 @@ void PhysicalPrinterDialog::build_printhost_settings(ConfigOptionsGroup* m_optgr
                 result = host->test(msg);
 
                 if (!result && host->is_cloud()) {
-                    if (const auto h = dynamic_cast<SimplyPrint*>(host.get()); h) {
-                        OAuthDialog dlg(this, h->get_oauth_params());
-                        dlg.ShowModal();
-
-                        const auto& r = dlg.get_result();
-                        result = r.success;
-                        if (r.success) {
-                            h->save_oauth_credential(r);
-                        } else {
-                            msg = r.error_message;
-                        }
-                    } else {
-                        PrinterCloudAuthDialog dlg(this->GetParent(), host.get());
-                        dlg.ShowModal();
-                        
-                        const auto api_key = dlg.GetApiKey();
-                        m_config->opt_string("printhost_apikey") = api_key;
-                        result       = !api_key.empty();
-                    }
+                    PrinterCloudAuthDialog dlg(this->GetParent(), host.get());
+                    dlg.ShowModal();
+                    
+                    const auto api_key = dlg.GetApiKey();
+                    m_config->opt_string("printhost_apikey") = api_key;
+                    result       = !api_key.empty();
                 }
             }
             if (result)
@@ -384,63 +370,12 @@ void PhysicalPrinterDialog::build_printhost_settings(ConfigOptionsGroup* m_optgr
 }
 
 void PhysicalPrinterDialog::update_ports() {
-    const PrinterTechnology tech = Preset::printer_technology(*m_config);
-    if (tech == ptFFF) {
-        const auto opt = m_config->option<ConfigOptionEnum<PrintHostType>>("host_type");
-        if (opt->value == htObico) {
-            auto build_web_ui = [](DynamicPrintConfig* config) {
-                auto host = config->opt_string("print_host");
-                auto port = config->opt_string("printhost_port");
-                auto api_key = config->opt_string("printhost_apikey");
-                if (host.empty() || port.empty()) {
-                    return std::string();
-                }
-                boost::regex  re("\\[(\\d+)\\]");
-                boost::smatch match;
-                if (!boost::regex_search(port, match, re))
-                    return std::string();
-                if (match.size() <= 1) {
-                    return std::string();
-                }
-                boost::format urlFormat("%1%/printers/%2%/control");
-                urlFormat % host % match[1];
-                return urlFormat.str();
-            };
-            auto url = build_web_ui(m_config);
-            if (Field* print_host_webui_field = m_optgroup->get_field("print_host_webui"); print_host_webui_field) {
-                if (TextInput* temp_input = dynamic_cast<TextInput*>(print_host_webui_field->getWindow()); temp_input) {
-                    if (wxTextCtrl* temp = temp_input->GetTextCtrl()) {
-                        temp->SetValue(wxString(url));
-                        m_config->opt_string("print_host_webui") = url;
-                    }
-                }
-            }
-        }
-    }
+    // No host-specific port logic needed for Pluraprint
 }
 
 void PhysicalPrinterDialog::update_webui()
 {
-    const PrinterTechnology tech = Preset::printer_technology(*m_config);
-    if (tech == ptFFF) {
-        const auto opt = m_config->option<ConfigOptionEnum<PrintHostType>>("host_type");
-        if (opt->value == htSimplyPrint) {
-            bool bbl_use_print_host_webui = false;
-            if (Field* printhost_webui_field = m_optgroup->get_field("bbl_use_print_host_webui"); printhost_webui_field) {
-                if (CheckBox* temp = dynamic_cast<CheckBox*>(printhost_webui_field); temp) {
-                    bbl_use_print_host_webui = boost::any_cast<bool>(temp->get_value());
-                }
-            }
-
-            const std::string v = bbl_use_print_host_webui ? "https://simplyprint.io/panel" : "";
-            if (Field* printhost_webui_field = m_optgroup->get_field("print_host_webui"); printhost_webui_field) {
-                if (wxTextCtrl* temp = dynamic_cast<TextCtrl*>(printhost_webui_field)->text_ctrl(); temp) {
-                    temp->SetValue(v);
-                }
-            }
-            m_config->opt_string("print_host_webui") = v;
-        }
-    }
+    // No host-specific webui logic needed for Pluraprint
 }
 
 void PhysicalPrinterDialog::update_printhost_buttons()
@@ -537,12 +472,9 @@ void PhysicalPrinterDialog::update(bool printer_change)
     m_optgroup->reload_config();
 
     const PrinterTechnology tech = Preset::printer_technology(*m_config);
-    // Only offer the host type selection for FFF, for SLA it's always the SL1 printer (at the moment)
-    bool supports_multiple_printers = false;
+    // Pluraprint is the only host type
     if (tech == ptFFF) {
-        update_host_type(printer_change);
-        const auto opt = m_config->option<ConfigOptionEnum<PrintHostType>>("host_type");
-        m_optgroup->show_field("host_type");
+        m_optgroup->hide_field("host_type");
 
         m_optgroup->enable_field("print_host");
         m_optgroup->show_field("print_host_webui");
@@ -552,105 +484,24 @@ void PhysicalPrinterDialog::update(bool printer_change)
         if (m_printhost_cafile_browse_btn)
             m_printhost_cafile_browse_btn->Enable();
 
-        // hide pre-configured address, in case user switched to a different host type
-        if (Field* printhost_field = m_optgroup->get_field("print_host"); printhost_field) {
-            if (wxTextCtrl* temp = dynamic_cast<TextCtrl*>(printhost_field)->text_ctrl(); temp) {
-                const auto current_host = temp->GetValue();
-                if (current_host == L"https://connect.prusa3d.com" ||
-                    current_host == L"https://app.obico.io" ||
-                    current_host == "https://simplyprint.io" || current_host == "https://simplyprint.io/panel") {
-                    temp->SetValue(wxString());
-                    m_config->opt_string("print_host") = "";
-                }
-            }
-        }
-        if (opt->value == htPrusaLink) { // PrusaConnect does NOT allow http digest
-            m_optgroup->show_field("printhost_authorization_type");
-            AuthorizationType auth_type = m_config->option<ConfigOptionEnum<AuthorizationType>>("printhost_authorization_type")->value;
-            m_optgroup->show_field("printhost_apikey", auth_type == AuthorizationType::atKeyPassword);
-            for (const char* opt_key : { "printhost_user", "printhost_password" })
-                m_optgroup->show_field(opt_key, auth_type == AuthorizationType::atUserPassword); 
-        } else {
-            m_optgroup->hide_field("printhost_authorization_type");
-            m_optgroup->show_field("printhost_apikey", true);
-            for (const std::string& opt_key : std::vector<std::string>{ "printhost_user", "printhost_password" })
-                m_optgroup->hide_field(opt_key);
-            supports_multiple_printers = opt->value == htRepetier || opt->value == htObico;
-
-            if (opt->value == htPrusaConnect) { // automatically show default prusaconnect address
-                if (Field* printhost_field = m_optgroup->get_field("print_host"); printhost_field) {
-                    if (wxTextCtrl* temp = dynamic_cast<TextCtrl*>(printhost_field)->text_ctrl(); temp && temp->GetValue().IsEmpty()) {
-                        temp->SetValue(L"https://connect.prusa3d.com");
-                        m_config->opt_string("print_host") = "https://connect.prusa3d.com";
-                    }
-                }
-            } else if (opt->value == htObico) { // automatically show default obico address
-                if (Field* printhost_field = m_optgroup->get_field("print_host"); printhost_field) {
-                    if (wxTextCtrl* temp = dynamic_cast<TextCtrl*>(printhost_field)->text_ctrl(); temp && temp->GetValue().IsEmpty()) {
-                        temp->SetValue(L"https://app.obico.io");
-                        m_config->opt_string("print_host") = "https://app.obico.io";
-                    }
-                }
-            } else if (opt->value == htSimplyPrint) {
-                // Set the host url
-                if (Field* printhost_field = m_optgroup->get_field("print_host"); printhost_field) {
-                    printhost_field->disable();
-                    if (wxTextCtrl* temp = dynamic_cast<TextCtrl*>(printhost_field)->text_ctrl(); temp && temp->GetValue().IsEmpty()) {
-                        temp->SetValue("https://simplyprint.io/panel");
-                    }
-                    m_config->opt_string("print_host") = "https://simplyprint.io/panel";
-                }
-
-                const auto current_webui = m_config->opt_string("print_host_webui");
-                if (!current_webui.empty()) {
-                    if (Field* printhost_webui_field = m_optgroup->get_field("print_host_webui"); printhost_webui_field) {
-                        if (wxTextCtrl* temp = dynamic_cast<TextCtrl*>(printhost_webui_field)->text_ctrl(); temp) {
-                            temp->SetValue("https://simplyprint.io/panel");
-                        }
-                    }
-                    m_config->opt_string("print_host_webui") = "https://simplyprint.io/panel";
-                }
-
-                // For bbl printers, show option to control the device tab
-                if (wxGetApp().preset_bundle->is_bbl_vendor()) {
-                    m_optgroup->show_field("bbl_use_print_host_webui");
-                    const bool use_print_host_webui = !current_webui.empty();
-                    if (Field* printhost_webui_field = m_optgroup->get_field("bbl_use_print_host_webui"); printhost_webui_field) {
-                        if (CheckBox* temp = dynamic_cast<CheckBox*>(printhost_webui_field); temp) {
-                            temp->set_value(use_print_host_webui);
-                        }
-                    }
-                }
-
-                m_optgroup->hide_field("print_host_webui");
-                m_optgroup->hide_field("printhost_apikey");
-                m_optgroup->disable_field("printhost_cafile");
-                m_optgroup->disable_field("printhost_ssl_ignore_revoke");
-                if (m_printhost_cafile_browse_btn)
-                    m_printhost_cafile_browse_btn->Disable();
-            }
-        }
-        
-        if (opt->value == htFlashforge) {
-                m_optgroup->hide_field("printhost_apikey");
-                m_optgroup->hide_field("printhost_authorization_type");
-            }
+        m_optgroup->hide_field("printhost_authorization_type");
+        m_optgroup->show_field("printhost_apikey", true);
+        for (const std::string& opt_key : std::vector<std::string>{ "printhost_user", "printhost_password" })
+            m_optgroup->hide_field(opt_key);
     }
     else {
-        m_optgroup->set_value("host_type", int(PrintHostType::htOctoPrint), false);
+        m_optgroup->set_value("host_type", int(PrintHostType::htPluraprint), false);
         m_optgroup->hide_field("host_type");
 
-        m_optgroup->show_field("printhost_authorization_type");
+        m_optgroup->hide_field("printhost_authorization_type");
+        m_optgroup->show_field("printhost_apikey", true);
 
-        AuthorizationType auth_type = m_config->option<ConfigOptionEnum<AuthorizationType>>("printhost_authorization_type")->value;
-        m_optgroup->show_field("printhost_apikey", auth_type == AuthorizationType::atKeyPassword);
-
-        for (const char *opt_key : { "printhost_user", "printhost_password" })
-            m_optgroup->show_field(opt_key, auth_type == AuthorizationType::atUserPassword);
+        for (const std::string& opt_key : std::vector<std::string>{ "printhost_user", "printhost_password" })
+            m_optgroup->hide_field(opt_key);
     }
 
-    m_optgroup->show_field("printhost_port", supports_multiple_printers);
-    m_printhost_port_browse_btn->Show(supports_multiple_printers);
+    m_optgroup->show_field("printhost_port", false);
+    m_printhost_port_browse_btn->Show(false);
 
     update_preset_input();
 
@@ -664,30 +515,8 @@ void PhysicalPrinterDialog::update_host_type(bool printer_change)
 {
     if (m_config == nullptr)
         return;
-    Field* ht = m_optgroup->get_field("host_type");
-    wxArrayString types;
-    int last_in_conf = m_config->option("host_type")->getInt(); //  this is real position in last choice
-
-    // Append localized enum_labels
-    assert(ht->m_opt.enum_labels.size() == ht->m_opt.enum_values.size());
-    for (size_t i = 0; i < ht->m_opt.enum_labels.size(); ++ i) {
-        wxString label = _(ht->m_opt.enum_labels[i]);
-        types.Add(label);
-    }
-
-    Choice* choice = dynamic_cast<Choice*>(ht);
-    choice->set_values(types);
-    int index_in_choice = (printer_change ? std::clamp(last_in_conf - ((int)ht->m_opt.enum_values.size() - (int)types.size()), 0, (int)ht->m_opt.enum_values.size() - 1) : last_in_conf);
-    choice->set_value(index_in_choice);
-    if ("prusalink" == ht->m_opt.enum_values.at(index_in_choice))
-        m_config->set_key_value("host_type", new ConfigOptionEnum<PrintHostType>(htPrusaLink));
-    else if ("prusaconnect" == ht->m_opt.enum_values.at(index_in_choice))
-        m_config->set_key_value("host_type", new ConfigOptionEnum<PrintHostType>(htPrusaConnect));
-    else {
-        int host_type = std::clamp(index_in_choice + ((int)ht->m_opt.enum_values.size() - (int)types.size()), 0, (int)ht->m_opt.enum_values.size() - 1);
-        PrintHostType type = static_cast<PrintHostType>(host_type);
-        m_config->set_key_value("host_type", new ConfigOptionEnum<PrintHostType>(type));
-    }
+    // Always set to Pluraprint
+    m_config->set_key_value("host_type", new ConfigOptionEnum<PrintHostType>(htPluraprint));
 }
 
 void PhysicalPrinterDialog::update_printers()

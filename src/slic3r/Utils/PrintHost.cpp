@@ -13,21 +13,9 @@
 
 #include "libslic3r/PrintConfig.hpp"
 #include "libslic3r/Channel.hpp"
-#include "OctoPrint.hpp"
-#include "Duet.hpp"
-#include "FlashAir.hpp"
-#include "AstroBox.hpp"
-#include "Repetier.hpp"
-#include "MKS.hpp"
-#include "ESP3D.hpp"
-#include "CrealityPrint.hpp"
+#include "Pluraprint.hpp"
 #include "../GUI/PrintHostDialogs.hpp"
 #include "../GUI/MainFrame.hpp"
-#include "Obico.hpp"
-#include "Flashforge.hpp"
-#include "SimplyPrint.hpp"
-#include "ElegooLink.hpp"
-#include "Pluraprint.hpp"
 
 namespace fs = boost::filesystem;
 using boost::optional;
@@ -40,40 +28,7 @@ PrintHost::~PrintHost() {}
 
 PrintHost* PrintHost::get_print_host(DynamicPrintConfig *config)
 {
-    PrinterTechnology tech = ptFFF;
-
-    {
-        const auto opt = config->option<ConfigOptionEnum<PrinterTechnology>>("printer_technology");
-        if (opt != nullptr) {
-            tech = opt->value;
-        }
-    }
-
-    if (tech == ptFFF) {
-        const auto opt = config->option<ConfigOptionEnum<PrintHostType>>("host_type");
-        const auto host_type = opt != nullptr ? opt->value : htOctoPrint;
-
-        switch (host_type) {
-            case htOctoPrint: return new OctoPrint(config);
-            case htDuet:      return new Duet(config);
-            case htFlashAir:  return new FlashAir(config);
-            case htAstroBox:  return new AstroBox(config);
-            case htRepetier:  return new Repetier(config);
-            case htPrusaLink: return new PrusaLink(config);
-            case htPrusaConnect: return new PrusaConnect(config);
-            case htMKS:       return new MKS(config);
-            case htESP3D:       return new ESP3D(config);
-            case htCrealityPrint:    return new CrealityPrint(config);
-            case htObico:     return new Obico(config);
-            case htFlashforge: return new Flashforge(config);
-            case htSimplyPrint: return new SimplyPrint(config);
-            case htElegooLink: return new ElegooLink(config);
-            case htPluraprint: return new Pluraprint(config);
-            default:          return nullptr;
-        }
-    } else {
-        return new SL1Host(config);
-    }
+    return new Pluraprint(config);
 }
 
 wxString PrintHost::format_error(const std::string &body, const std::string &error, unsigned status) const

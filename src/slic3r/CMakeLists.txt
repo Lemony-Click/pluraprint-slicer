@@ -541,8 +541,6 @@ set(SLIC3R_GUI_SOURCES
     pchheader.hpp
     Utils/ASCIIFolding.cpp
     Utils/ASCIIFolding.hpp
-    Utils/AstroBox.cpp
-    Utils/AstroBox.hpp
     Utils/bambu_networking.hpp
     Utils/Bonjour.cpp
     Utils/Bonjour.hpp
@@ -550,24 +548,12 @@ set(SLIC3R_GUI_SOURCES
     Utils/CalibUtils.hpp
     Utils/ColorSpaceConvert.cpp
     Utils/ColorSpaceConvert.hpp
-    Utils/CrealityPrint.cpp
-    Utils/CrealityPrint.hpp
-    Utils/Duet.cpp
-    Utils/Duet.hpp
-    Utils/ElegooLink.cpp
-    Utils/ElegooLink.hpp
     Utils/EmbossStyleManager.cpp
     Utils/EmbossStyleManager.hpp
-    Utils/ESP3D.cpp
-    Utils/ESP3D.hpp
     Utils/FileHelp.cpp
     Utils/FileHelp.hpp
     Utils/FixModelByWin10.cpp
     Utils/FixModelByWin10.hpp
-    Utils/FlashAir.cpp
-    Utils/FlashAir.hpp
-    Utils/Flashforge.cpp
-    Utils/Flashforge.hpp
     Utils/FontConfigHelp.cpp
     Utils/FontConfigHelp.hpp
     Utils/HexFile.cpp
@@ -580,8 +566,6 @@ set(SLIC3R_GUI_SOURCES
     Utils/json_diff.hpp
     Utils/minilzo_extension.cpp
     Utils/minilzo_extension.hpp
-    Utils/MKS.cpp
-    Utils/MKS.hpp
     Utils/NetworkAgent.cpp
     Utils/NetworkAgent.hpp
     Utils/NetworkAgentFactory.hpp
@@ -604,10 +588,6 @@ set(SLIC3R_GUI_SOURCES
     Utils/BBLPrinterAgent.hpp
     Utils/BBLNetworkPlugin.cpp
     Utils/BBLNetworkPlugin.hpp
-    Utils/Obico.cpp
-    Utils/Obico.hpp
-    Utils/OctoPrint.cpp
-    Utils/OctoPrint.hpp
     Utils/Pluraprint.cpp
     Utils/Pluraprint.hpp
     Utils/PrintHost.cpp
@@ -618,14 +598,10 @@ set(SLIC3R_GUI_SOURCES
     Utils/Profile.hpp
     Utils/RaycastManager.cpp
     Utils/RaycastManager.hpp
-    Utils/Repetier.cpp
-    Utils/Repetier.hpp
     Utils/Serial.cpp
     Utils/Serial.hpp
     Utils/SerialMessage.hpp
     Utils/SerialMessageType.hpp
-    Utils/SimplyPrint.cpp
-    Utils/SimplyPrint.hpp
     Utils/TCPConsole.cpp
     Utils/TCPConsole.hpp
     Utils/UndoRedo.cpp

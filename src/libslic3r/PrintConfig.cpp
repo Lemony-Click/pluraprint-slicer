@@ -115,20 +115,6 @@ static t_config_enum_values s_keys_map_PrinterTechnology {
 CONFIG_OPTION_ENUM_DEFINE_STATIC_MAPS(PrinterTechnology)
 
 static t_config_enum_values s_keys_map_PrintHostType {
-    { "prusalink",      htPrusaLink },
-    { "prusaconnect",   htPrusaConnect },
-    { "octoprint",      htOctoPrint },
-    { "crealityprint",  htCrealityPrint },
-    { "duet",           htDuet },
-    { "flashair",       htFlashAir },
-    { "astrobox",       htAstroBox },
-    { "repetier",       htRepetier },
-    { "mks",            htMKS },
-    { "esp3d",          htESP3D },
-    { "obico",          htObico },
-    { "flashforge",     htFlashforge },
-    { "simplyprint",    htSimplyPrint },
-    { "elegoolink",     htElegooLink },
     { "pluraprint",     htPluraprint }
 };
 CONFIG_OPTION_ENUM_DEFINE_STATIC_MAPS(PrintHostType)
@@ -783,7 +769,7 @@ void PrintConfigDef::init_common_params()
 
     def = this->add("printhost_cafile", coString);
     def->label = L("HTTPS CA File");
-    def->tooltip = L("Custom CA certificate file can be specified for HTTPS OctoPrint connections, in crt/pem format. "
+    def->tooltip = L("Custom CA certificate file can be specified for HTTPS connections, in crt/pem format. "
         "If left blank, the default OS CA certificate repository is used.");
     def->mode = comAdvanced;
     def->cli = ConfigOptionDef::nocli;
@@ -4412,39 +4398,11 @@ void PrintConfigDef::init_fff_params()
     def->tooltip = L("Pluraprint Slicer can upload G-code files to a printer host. This field must contain "
                    "the kind of the host.");
     def->enum_keys_map = &ConfigOptionEnum<PrintHostType>::get_enum_values();
-    def->enum_values.push_back("prusalink");
-    def->enum_values.push_back("prusaconnect");
-    def->enum_values.push_back("octoprint");
-    def->enum_values.push_back("duet");
-    def->enum_values.push_back("flashair");
-    def->enum_values.push_back("astrobox");
-    def->enum_values.push_back("repetier");
-    def->enum_values.push_back("mks");
-    def->enum_values.push_back("esp3d");
-    def->enum_values.push_back("crealityprint");
-    def->enum_values.push_back("obico");
-    def->enum_values.push_back("flashforge");
-    def->enum_values.push_back("simplyprint");
-    def->enum_values.push_back("elegoolink");
     def->enum_values.push_back("pluraprint");
-    def->enum_labels.push_back("PrusaLink");
-    def->enum_labels.push_back("PrusaConnect");
-    def->enum_labels.push_back("Octo/Klipper");
-    def->enum_labels.push_back("Duet");
-    def->enum_labels.push_back("FlashAir");
-    def->enum_labels.push_back("AstroBox");
-    def->enum_labels.push_back("Repetier");
-    def->enum_labels.push_back("MKS");
-    def->enum_labels.push_back("ESP3D");
-    def->enum_labels.push_back("CrealityPrint");
-    def->enum_labels.push_back("Obico");
-    def->enum_labels.push_back("Flashforge");
-    def->enum_labels.push_back("SimplyPrint");
-    def->enum_labels.push_back("Elegoo Link");
     def->enum_labels.push_back("Pluraprint");
     def->mode = comAdvanced;
     def->cli = ConfigOptionDef::nocli;
-    def->set_default_value(new ConfigOptionEnum<PrintHostType>(htOctoPrint));
+    def->set_default_value(new ConfigOptionEnum<PrintHostType>(htPluraprint));
 
     def = this->add("nozzle_volume", coFloats);
     def->label = L("Nozzle volume");
