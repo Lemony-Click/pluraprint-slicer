@@ -1,4 +1,4 @@
-@REM OrcaSlicer build script for Windows with VS auto-detect
+@REM PluraprintSlicer build script for Windows with VS auto-detect
 @echo off
 set WP=%CD%
 
@@ -70,9 +70,9 @@ if "%1"=="pack" (
     setlocal ENABLEDELAYEDEXPANSION 
     cd %WP%/deps/build
     for /f "tokens=2-4 delims=/ " %%a in ('date /t') do set build_date=%%c%%b%%a
-    echo packing deps: OrcaSlicer_dep_win64_!build_date!_vs!VS_VERSION!.zip
+    echo packing deps: PluraprintSlicer_dep_win64_!build_date!_vs!VS_VERSION!.zip
 
-    %WP%/tools/7z.exe a OrcaSlicer_dep_win64_!build_date!_vs!VS_VERSION!.zip OrcaSlicer_dep
+    %WP%/tools/7z.exe a PluraprintSlicer_dep_win64_!build_date!_vs!VS_VERSION!.zip PluraprintSlicer_dep
     exit /b 0
 )
 

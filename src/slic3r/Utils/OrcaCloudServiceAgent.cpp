@@ -60,7 +60,7 @@ constexpr const char* CONFIG_ORCA_API_URL = "orca_api_url";
 constexpr const char* CONFIG_ORCA_AUTH_URL = "orca_auth_url";
 constexpr const char* CONFIG_ORCA_PUB_KEY = "orca_pub_key";
 
-constexpr const char* SECRET_STORE_SERVICE = "OrcaSlicer/Auth";
+constexpr const char* SECRET_STORE_SERVICE = "PluraprintSlicer/Auth";
 constexpr const char* SECRET_STORE_USER    = "orca_refresh_token";
 constexpr std::chrono::seconds TOKEN_REFRESH_SKEW{900}; // 15 minutes
 
@@ -70,7 +70,7 @@ std::string generate_uuid(const std::string& name = "")
         return "";
     }
 
-    // Use a fixed namespace UUID for OrcaSlicer profiles
+    // Use a fixed namespace UUID for PluraprintSlicer profiles
     // This ensures the same name always generates the same UUID
     static const boost::uuids::uuid orca_namespace =
         boost::uuids::string_generator()("f47ac10b-58cc-4372-a567-0e02b2c3d479");

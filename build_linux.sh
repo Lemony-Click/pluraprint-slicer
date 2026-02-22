@@ -216,7 +216,7 @@ if [[ -n "${BUILD_DEPS}" ]] ; then
 fi
 
 if [[ -n "${BUILD_ORCA}" ]] || [[ -n "${BUILD_TESTS}" ]] ; then
-    echo "Configuring OrcaSlicer..."
+    echo "Configuring PluraprintSlicer..."
     if [[ -n "${CLEAN_BUILD}" ]] ; then
         print_and_run rm -fr $BUILD_DIR
     fi
@@ -238,10 +238,10 @@ if [[ -n "${BUILD_ORCA}" ]] || [[ -n "${BUILD_TESTS}" ]] ; then
 "${BUILD_ARGS[@]}"
     echo "done"
     if [[ -n "${BUILD_ORCA}" ]]; then
-	echo "Building OrcaSlicer ..."
-	print_and_run cmake --build $BUILD_DIR --config "${BUILD_CONFIG}" --target OrcaSlicer
-	echo "Building OrcaSlicer_profile_validator .."
-	print_and_run cmake --build $BUILD_DIR --config "${BUILD_CONFIG}" --target OrcaSlicer_profile_validator
+	echo "Building PluraprintSlicer ..."
+	print_and_run cmake --build $BUILD_DIR --config "${BUILD_CONFIG}" --target PluraprintSlicer
+	echo "Building PluraprintSlicer_profile_validator .."
+	print_and_run cmake --build $BUILD_DIR --config "${BUILD_CONFIG}" --target PluraprintSlicer_profile_validator
 	./scripts/run_gettext.sh
     fi
     if [[ -n "${BUILD_TESTS}" ]] ; then

@@ -1339,7 +1339,7 @@ Cornering_Test_Dlg::Cornering_Test_Dlg(wxWindow* parent, wxWindowID id, Plater* 
                 break;
             }
             case GCodeFlavor::gcfRepRapFirmware:
-                note_msg += _L("RepRap detected: Jerk in mm/s.\nOrcaSlicer will convert the values to mm/min when necessary.");
+                note_msg += _L("RepRap detected: Jerk in mm/s.\nPluraprintSlicer will convert the values to mm/min when necessary.");
                 break;
             default:
                 break;

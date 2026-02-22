@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# OrcaSlicer Flatpak Build Script
-# This script builds and packages OrcaSlicer as a Flatpak package locally
+# PluraprintSlicer Flatpak Build Script
+# This script builds and packages PluraprintSlicer as a Flatpak package locally
 # Based on the GitHub Actions workflow in .github/workflows/build_all.yml
 
 set -e
@@ -27,7 +27,7 @@ CACHE_DIR=".flatpak-builder"
 show_help() {
     echo "Usage: $0 [OPTIONS]"
     echo ""
-    echo "Build OrcaSlicer as a Flatpak package"
+    echo "Build PluraprintSlicer as a Flatpak package"
     echo ""
     echo "Options:"
     echo "  -a, --arch ARCH        Target architecture (x86_64, aarch64) [default: $ARCH]"
@@ -107,7 +107,7 @@ if ! [[ "$JOBS" =~ ^[1-9][0-9]*$ ]]; then
     exit 1
 fi
 
-echo -e "${BLUE}OrcaSlicer Flatpak Build Script${NC}"
+echo -e "${BLUE}PluraprintSlicer Flatpak Build Script${NC}"
 echo -e "${BLUE}================================${NC}"
 echo -e "Architecture: ${GREEN}$ARCH${NC}"
 echo -e "Build directory: ${GREEN}$BUILD_DIR${NC}"
@@ -242,8 +242,8 @@ mkdir -p "$BUILD_DIR"
 rm -rf "$BUILD_DIR/build-dir"
 
 # Check if flatpak manifest exists
-if [[ ! -f "./scripts/flatpak/io.github.softfever.OrcaSlicer.yml" ]]; then
-    echo -e "${RED}Error: Flatpak manifest not found at scripts/flatpak/io.github.softfever.OrcaSlicer.yml${NC}"
+if [[ ! -f "./scripts/flatpak/io.github.softfever.PluraprintSlicer.yml" ]]; then
+    echo -e "${RED}Error: Flatpak manifest not found at scripts/flatpak/io.github.softfever.PluraprintSlicer.yml${NC}"
     exit 1
 fi
 
@@ -252,7 +252,7 @@ echo -e "${YELLOW}Building Flatpak package...${NC}"
 echo -e "This may take a while (30+ minutes depending on your system)..."
 echo ""
 
-BUNDLE_NAME="OrcaSlicer-Linux-flatpak_${VER}_${ARCH}.flatpak"
+BUNDLE_NAME="PluraprintSlicer-Linux-flatpak_${VER}_${ARCH}.flatpak"
 
 # Remove any existing bundle
 rm -f "$BUNDLE_NAME"
@@ -298,7 +298,7 @@ fi
 if ! flatpak-builder \
     "${BUILDER_ARGS[@]}" \
     "$BUILD_DIR/build-dir" \
-    scripts/flatpak/io.github.softfever.OrcaSlicer.yml; then
+    scripts/flatpak/io.github.softfever.PluraprintSlicer.yml; then
     echo -e "${RED}Error: flatpak-builder failed${NC}"
     echo -e "${YELLOW}Check the build log above for details${NC}"
     exit 1
@@ -309,7 +309,7 @@ echo -e "${YELLOW}Creating Flatpak bundle...${NC}"
 if ! flatpak build-bundle \
     "$BUILD_DIR/repo" \
     "$BUNDLE_NAME" \
-    io.github.softfever.OrcaSlicer \
+    io.github.softfever.PluraprintSlicer \
     --arch="$ARCH"; then
     echo -e "${RED}Error: Failed to create Flatpak bundle${NC}"
     exit 1
@@ -327,11 +327,11 @@ echo ""
 echo -e "${BLUE}To install the Flatpak:${NC}"
 echo -e "flatpak install --user $BUNDLE_NAME"
 echo ""
-echo -e "${BLUE}To run OrcaSlicer:${NC}"
-echo -e "flatpak run io.github.softfever.OrcaSlicer"
+echo -e "${BLUE}To run PluraprintSlicer:${NC}"
+echo -e "flatpak run io.github.softfever.PluraprintSlicer"
 echo ""
 echo -e "${BLUE}To uninstall:${NC}"
-echo -e "flatpak uninstall --user io.github.softfever.OrcaSlicer"
+echo -e "flatpak uninstall --user io.github.softfever.PluraprintSlicer"
 echo ""
 if [[ "$FORCE_CLEAN" != true ]]; then
     echo -e "${BLUE}Cache Management:${NC}"

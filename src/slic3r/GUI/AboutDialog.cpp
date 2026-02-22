@@ -18,7 +18,7 @@ AboutDialogLogo::AboutDialogLogo(wxWindow* parent)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize)
 {
     this->SetBackgroundColour(*wxWHITE);
-    this->logo = ScalableBitmap(this, Slic3r::var("OrcaSlicer_192px.png"), wxBITMAP_TYPE_PNG);
+    this->logo = ScalableBitmap(this, Slic3r::var("PluraprintSlicer_192px.png"), wxBITMAP_TYPE_PNG); // TODO: Replace with Pluraprint logo
     this->SetMinSize(this->logo.GetBmpSize());
 
     this->Bind(wxEVT_PAINT, &AboutDialogLogo::onRepaint, this);
@@ -147,9 +147,9 @@ wxString CopyrightsDialog::get_html_text()
                 "<font size=\"3\">",
          bgr_clr_str, text_clr_str, text_clr_str,
         _L("License"),
-        _L("Orca Slicer is licensed under "),
+        _L("Pluraprint Slicer is licensed under "),
         "https://www.gnu.org/licenses/agpl-3.0.html",_L("GNU Affero General Public License, version 3"),
-        _L("Orca Slicer is based on PrusaSlicer and BambuStudio"),
+        _L("Pluraprint Slicer is based on Orca Slicer, which is based on PrusaSlicer and BambuStudio"),
         _L("Libraries"),
         _L("This software uses open source components whose copyright and other proprietary rights belong to their respective owners"));
 
@@ -230,7 +230,7 @@ AboutDialog::AboutDialog()
 	bool is_dark = wxGetApp().app_config->get("dark_color_mode") == "1";
 
     // logo
-    m_logo_bitmap = ScalableBitmap(this, is_dark ? "OrcaSlicer_about_dark" : "OrcaSlicer_about", 125);
+    m_logo_bitmap = ScalableBitmap(this, is_dark ? "PluraprintSlicer_about_dark" : "PluraprintSlicer_about", 125); // TODO: Replace with Pluraprint about images
     m_logo = new wxStaticBitmap(this, wxID_ANY, m_logo_bitmap.bmp(), wxDefaultPosition,wxDefaultSize, 0);
     m_logo->SetSizer(vesizer);
 
@@ -271,7 +271,8 @@ AboutDialog::AboutDialog()
     text_sizer_horiz->Add( 0, 0, 0, wxLEFT, FromDIP(20));
 
     std::vector<wxString> text_list;
-    text_list.push_back(_L("OrcaSlicer is based on BambuStudio, PrusaSlicer, and SuperSlicer."));
+    text_list.push_back(_L("Pluraprint Slicer is based on Orca Slicer by SoftFever."));
+    text_list.push_back(_L("Orca Slicer is based on BambuStudio, PrusaSlicer, and SuperSlicer."));
     text_list.push_back(_L("BambuStudio is originally based on PrusaSlicer by PrusaResearch."));
     text_list.push_back(_L("PrusaSlicer is originally based on Slic3r by Alessandro Ranellucci."));
     text_list.push_back(_L("Slic3r was created by Alessandro Ranellucci with the help of many other contributors."));
@@ -316,7 +317,7 @@ AboutDialog::AboutDialog()
 
     copyright_hor_sizer->Add(copyright_ver_sizer, 0, wxLEFT, FromDIP(20));
 
-    wxStaticText *html_text = new wxStaticText(this, wxID_ANY, "Copyright(C) 2022-2025 Li Jiang All Rights Reserved", wxDefaultPosition, wxDefaultSize);
+    wxStaticText *html_text = new wxStaticText(this, wxID_ANY, "Copyright(C) 2025 Pluraprint. Based on Orca Slicer by Li Jiang.", wxDefaultPosition, wxDefaultSize);
     html_text->SetForegroundColour(wxColour(107, 107, 107));
 
     copyright_ver_sizer->Add(html_text, 0, wxALL , 0);
@@ -333,7 +334,7 @@ AboutDialog::AboutDialog()
               (boost::format(
               "<html>"
               "<body>"
-              "<p style=\"text-align:left\"><a style=\"color:#009789\" href=\"https://github.com/OrcaSlicer/OrcaSlicer\">https://github.com/OrcaSlicer/OrcaSlicer</ a></p>"
+              "<p style=\"text-align:left\"><a style=\"color:#009789\" href=\"https://github.com/OrcaSlicer/OrcaSlicer\">Based on Orca Slicer</ a></p>"
               "</body>"
               "</html>")
             ).str());

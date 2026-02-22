@@ -63,7 +63,7 @@ if (APPLE)
     message(STATUS "CMAKE_OSX_DEPLOYMENT_TARGET: ${CMAKE_OSX_DEPLOYMENT_TARGET}")
 endif ()
 
-project(OrcaSlicer)
+project(PluraprintSlicer)
 
 # Backward compatibility for old CMake versions
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CMAKE_VERSION VERSION_LESS "3.25")
@@ -160,9 +160,9 @@ if (APPLE)
     if (CMAKE_MACOSX_BUNDLE)
         set(CMAKE_INSTALL_RPATH @executable_path/../Frameworks)
     endif()
-    SET(CMAKE_XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "com.softfever3d.orca-slicer")
+    SET(CMAKE_XCODE_ATTRIBUTE_PRODUCT_BUNDLE_IDENTIFIER "com.pluraprint.pluraprint-slicer")
 
-    message(STATUS "Orca: IS_CROSS_COMPILE: ${IS_CROSS_COMPILE}")
+    message(STATUS "Pluraprint: IS_CROSS_COMPILE: ${IS_CROSS_COMPILE}")
 endif ()
 
 # Proposal for C++ unit tests and sandboxes
@@ -918,49 +918,49 @@ if (WIN32)
     install (PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION ".")
 elseif (SLIC3R_FHS)
     # CMAKE_INSTALL_FULL_DATAROOTDIR: read-only architecture-independent data root (share)
-    set(SLIC3R_FHS_RESOURCES "${CMAKE_INSTALL_FULL_DATAROOTDIR}/OrcaSlicer")
+    set(SLIC3R_FHS_RESOURCES "${CMAKE_INSTALL_FULL_DATAROOTDIR}/PluraprintSlicer")
     install(DIRECTORY ${SLIC3R_RESOURCES_DIR}/ DESTINATION ${SLIC3R_FHS_RESOURCES}
         PATTERN "*/udev" EXCLUDE
     )
-    install(FILES src/dev-utils/platform/unix/OrcaSlicer.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
+    install(FILES src/dev-utils/platform/unix/PluraprintSlicer.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
     foreach(SIZE 32 128 192)
-        install(FILES ${SLIC3R_RESOURCES_DIR}/images/OrcaSlicer_${SIZE}px.png
-            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/${SIZE}x${SIZE}/apps RENAME OrcaSlicer.png
+        install(FILES ${SLIC3R_RESOURCES_DIR}/images/PluraprintSlicer_${SIZE}px.png
+            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/${SIZE}x${SIZE}/apps RENAME PluraprintSlicer.png
         )
     endforeach()
 elseif (CMAKE_MACOSX_BUNDLE)
     # install(DIRECTORY "${SLIC3R_RESOURCES_DIR}/" DESTINATION "${CMAKE_INSTALL_PREFIX}/OrcaSlicer.app/Contents/resources")
 else ()
-    install(FILES src/dev-utils/platform/unix/OrcaSlicer.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/resources/applications)
+    install(FILES src/dev-utils/platform/unix/PluraprintSlicer.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/resources/applications)
     install(DIRECTORY "${SLIC3R_RESOURCES_DIR}/" DESTINATION "${CMAKE_INSTALL_PREFIX}/resources")
 endif ()
 
 install(FILES ${CMAKE_SOURCE_DIR}/LICENSE.txt DESTINATION ".")
 configure_file(${LIBDIR}/dev-utils/platform/unix/fhs.hpp.in ${LIBDIR_BIN}/dev-utils/platform/unix/fhs.hpp)
 
-set (CPACK_PACKAGE_NAME "OrcaSlicer")
-set (CPACK_PACKAGE_VENDOR "SoftFever")
+set (CPACK_PACKAGE_NAME "PluraprintSlicer")
+set (CPACK_PACKAGE_VENDOR "Pluraprint")
 set (CPACK_PACKAGE_VERSION_MAJOR "${ORCA_VERSION_MAJOR}")
 set (CPACK_PACKAGE_VERSION_MINOR "${ORCA_VERSION_MINOR}")
 set (CPACK_PACKAGE_VERSION_PATCH "${ORCA_VERSION_PATCH}")
-set (CPACK_PACKAGE_FILE_NAME "OrcaSlicer_Windows_Installer_V${SoftFever_VERSION}")
-set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "Orca Slicer is an open source slicer for FDM printers")
-set (CPACK_PACKAGE_HOMEPAGE_URL "https://github.com/OrcaSlicer/OrcaSlicer")
+set (CPACK_PACKAGE_FILE_NAME "PluraprintSlicer_Windows_Installer_V${SoftFever_VERSION}")
+set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "Pluraprint Slicer is an open source slicer for FDM printers, based on Orca Slicer")
+set (CPACK_PACKAGE_HOMEPAGE_URL "https://github.com/Pluraprint/PluraprintSlicer")
 set (CPACK_PACKAGE_INSTALL_DIRECTORY ${CPACK_PACKAGE_NAME})
-set (CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/resources/images\\\\OrcaSlicer.ico")
+set (CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/resources/images\\\\PluraprintSlicer.ico")
 set (CPACK_NSIS_MUI_ICON "${CPACK_PACKAGE_ICON}")
 set (CPACK_NSIS_MUI_UNIICON "${CPACK_PACKAGE_ICON}")
-set (CPACK_NSIS_INSTALLED_ICON_NAME  "$INSTDIR\\\\orca-slicer.exe")
+set (CPACK_NSIS_INSTALLED_ICON_NAME  "$INSTDIR\\\\pluraprint-slicer.exe")
 set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
-    CreateShortCut \\\"$DESKTOP\\\\OrcaSlicer.lnk\\\" \\\"$INSTDIR\\\\orca-slicer.exe\\\"
+    CreateShortCut \\\"$DESKTOP\\\\PluraprintSlicer.lnk\\\" \\\"$INSTDIR\\\\pluraprint-slicer.exe\\\"
 ")
 set (CPACK_PACKAGE_CHECKSUM SHA256)
-set (CPACK_PACKAGE_INSTALL_REGISTRY_KEY "OrcaSlicer")
+set (CPACK_PACKAGE_INSTALL_REGISTRY_KEY "PluraprintSlicer")
 set (CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
 set (CPACK_NSIS_EXECUTABLES_DIRECTORY ".")
 # set (CPACK_NSIS_MODIFY_PATH "ON")
-set(CPACK_PACKAGE_EXECUTABLES "orca-slicer;OrcaSlicer")
-set(CPACK_CREATE_DESKTOP_LINKS "orca-slicer")
+set(CPACK_PACKAGE_EXECUTABLES "pluraprint-slicer;PluraprintSlicer")
+set(CPACK_CREATE_DESKTOP_LINKS "pluraprint-slicer")
 set (CPACK_RESOURCE_FILE_LICENSE ${CMAKE_SOURCE_DIR}/LICENSE.txt) # must also include in install command
 
 set(CPACK_WIX_UPGRADE_GUID "058245e8-20e0-4a95-9ab7-1acfe17ad511")

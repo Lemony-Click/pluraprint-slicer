@@ -128,9 +128,9 @@ enum ConfigMenuIDs {
     ConfigMenuCnt,
 };
 
-enum OrcaSlicerMenuIDs {
-  OrcaSlicerMenuAbout,
-  OrcaSlicerMenuPreferences,
+enum PluraprintSlicerMenuIDs {
+  PluraprintSlicerMenuAbout,
+  PluraprintSlicerMenuPreferences,
 };
 
 enum CameraMenuIDs {
@@ -350,7 +350,7 @@ public:
     bool is_editor() const { return m_app_mode == EAppMode::Editor; }
     bool is_gcode_viewer() const { return m_app_mode == EAppMode::GCodeViewer; }
     bool is_recreating_gui() const { return m_is_recreating_gui; }
-    std::string logo_name() const { return is_editor() ? "OrcaSlicer" : "OrcaSlicer-gcodeviewer"; }
+    std::string logo_name() const { return is_editor() ? "PluraprintSlicer" : "PluraprintSlicer-gcodeviewer"; }
 
     bool is_closing() const { return m_is_closing.load(std::memory_order_acquire); }
     void set_closing(bool closing) { m_is_closing.store(closing, std::memory_order_release); }
