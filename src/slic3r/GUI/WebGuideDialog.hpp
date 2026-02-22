@@ -28,7 +28,6 @@
 
 #include "GUI_App.hpp"
 #include "libslic3r/PresetBundle.hpp"
-#include "slic3r/Utils/PresetUpdater.hpp"
 
 #include <nlohmann/json.hpp>
 
@@ -80,7 +79,7 @@ public:
     int GetFilamentInfo( std::string VendorDirectory,json & pFilaList, std::string filepath, std::string &sVendor, std::string &sType);
 
 
-    bool apply_config(AppConfig *app_config, PresetBundle *preset_bundle, const PresetUpdater *updater, bool& apply_keeped_changes);
+    bool apply_config(AppConfig *app_config, PresetBundle *preset_bundle, bool& apply_keeped_changes);
     bool run();
 
     void        StrReplace(std::string &strBase, std::string strSrc, std::string strDes);
@@ -89,8 +88,6 @@ public:
     bool LoadFile(std::string jPath, std::string & sContent);
 
     // install plugin
-    int DownloadPlugin();
-    int InstallPlugin();
     int ShowPluginStatus(int status, int percent, bool &cancel);
 
     void on_dpi_changed(const wxRect &suggested_rect) {}

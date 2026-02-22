@@ -103,8 +103,6 @@ set(SLIC3R_GUI_SOURCES
     GUI/DownloaderFileGet.cpp
     GUI/DownloaderFileGet.hpp
     GUI/Downloader.hpp
-    GUI/DownloadProgressDialog.cpp
-    GUI/DownloadProgressDialog.hpp
     GUI/DragCanvas.cpp
     GUI/DragCanvas.hpp
     GUI/EditGCodeDialog.cpp
@@ -294,8 +292,6 @@ set(SLIC3R_GUI_SOURCES
     GUI/Jobs/SLAImportJob.cpp
     GUI/Jobs/SLAImportJob.hpp
     GUI/Jobs/ThreadSafeQueue.hpp
-    GUI/Jobs/UpgradeNetworkJob.cpp
-    GUI/Jobs/UpgradeNetworkJob.hpp
     GUI/Jobs/Worker.hpp
     GUI/KBShortcutsDialog.cpp
     GUI/KBShortcutsDialog.hpp
@@ -387,8 +383,6 @@ set(SLIC3R_GUI_SOURCES
     GUI/PrintHostDialogs.hpp
     GUI/PrintOptionsDialog.cpp
     GUI/PrintOptionsDialog.hpp
-    GUI/PrivacyUpdateDialog.cpp
-    GUI/PrivacyUpdateDialog.hpp
     GUI/ProgressStatusBar.cpp
     GUI/ProgressStatusBar.hpp
     GUI/Project.cpp
@@ -456,18 +450,10 @@ set(SLIC3R_GUI_SOURCES
     GUI/TickCode.hpp
     GUI/UnsavedChangesDialog.cpp
     GUI/UnsavedChangesDialog.hpp
-    GUI/UpdateDialogs.cpp
-    GUI/UpdateDialogs.hpp
-    GUI/NetworkPluginDialog.cpp
-    GUI/NetworkPluginDialog.hpp
-    GUI/UpgradePanel.cpp
-    GUI/UpgradePanel.hpp
     GUI/UserManager.cpp
     GUI/UserManager.hpp
     GUI/UserNotification.cpp
     GUI/UserNotification.hpp
-    GUI/WebDownPluginDlg.cpp
-    GUI/WebDownPluginDlg.hpp
     GUI/WebGuideDialog.cpp
     GUI/WebGuideDialog.hpp
     GUI/WebUserLoginDialog.cpp
@@ -624,8 +610,6 @@ set(SLIC3R_GUI_SOURCES
     Utils/OctoPrint.hpp
     Utils/Pluraprint.cpp
     Utils/Pluraprint.hpp
-    Utils/PresetUpdater.cpp
-    Utils/PresetUpdater.hpp
     Utils/PrintHost.cpp
     Utils/PrintHost.hpp
     Utils/Process.cpp

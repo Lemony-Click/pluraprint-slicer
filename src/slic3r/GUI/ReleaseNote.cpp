@@ -315,7 +315,6 @@ UpdateVersionDialog::UpdateVersionDialog(wxWindow *parent)
     m_button_skip_version->SetStyle(ButtonStyle::Regular, ButtonType::Choice);
 
     m_button_skip_version->Bind(wxEVT_LEFT_DOWN, [this](wxMouseEvent &e) {
-        wxGetApp().set_skip_version(true);
         EndModal(wxID_NO);
     });
 

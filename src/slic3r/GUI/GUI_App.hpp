@@ -15,7 +15,6 @@
 #include "slic3r/GUI/WebUserLoginDialog.hpp"
 #include "slic3r/GUI/BindDialog.hpp"
 #include "slic3r/GUI/HMS.hpp"
-#include "slic3r/GUI/Jobs/UpgradeNetworkJob.hpp"
 #include "slic3r/GUI/HttpServer.hpp"
 #include "../Utils/PrintHost.hpp"
 
@@ -56,7 +55,6 @@ namespace Slic3r {
 class AppConfig;
 class FilamentColorCodeQuery;
 class PresetBundle;
-class PresetUpdater;
 class ModelObject;
 class Model;
 class UserManager;
@@ -152,74 +150,8 @@ static wxString dots("...", wxConvUTF8);
 #endif
 
 
-#define  VERSION_LEN    4
-class VersionInfo
-{
-public:
-    std::string version_str;
-    std::string version_name;
-    std::string description;
-    std::string url;
-    bool        force_upgrade{ false };
-    int      ver_items[VERSION_LEN];  // AA.BB.CC.DD
-    VersionInfo() {
-        for (int i = 0; i < VERSION_LEN; i++) {
-            ver_items[i] = 0;
-        }
-        force_upgrade = false;
-        version_str = "";
-    }
-
-    void parse_version_str(std::string str) {
-        version_str = str;
-        std::vector<std::string> items;
-        boost::split(items, str, boost::is_any_of("."));
-        if (items.size() == VERSION_LEN) {
-            try {
-                for (int i = 0; i < VERSION_LEN; i++) {
-                    ver_items[i] = stoi(items[i]);
-                }
-            }
-            catch (...) {
-                ;
-            }
-        }
-    }
-    static std::string convert_full_version(std::string short_version);
-    static std::string convert_short_version(std::string full_version);
-    static std::string get_full_version() {
-        return convert_full_version(SLIC3R_VERSION);
-    }
-
-    /* return > 0, need update */
-    int compare(std::string ver_str) {
-        if (version_str.empty()) return -1;
-
-        int      ver_target[VERSION_LEN];
-        std::vector<std::string> items;
-        boost::split(items, ver_str, boost::is_any_of("."));
-        if (items.size() == VERSION_LEN) {
-            try {
-                for (int i = 0; i < VERSION_LEN; i++) {
-                    ver_target[i] = stoi(items[i]);
-                    if (ver_target[i] < ver_items[i]) {
-                        return 1;
-                    }
-                    else if (ver_target[i] == ver_items[i]) {
-                        continue;
-                    }
-                    else {
-                        return -1;
-                    }
-                }
-            }
-            catch (...) {
-                return -1;
-            }
-        }
-        return -1;
-    }
-};
+class Tab;
+class ConfigWizard;
 
 class GUI_App : public wxApp
 {
@@ -295,15 +227,11 @@ private:
     std::vector<std::string> need_delete_presets;   // store setting ids of preset
     std::vector<bool> m_create_preset_blocked { false, false, false, false, false, false }; // excceed limit
     bool m_networking_compatible { false };
-    bool m_networking_need_update { false };
     bool m_networking_cancel_update { false };
-    std::shared_ptr<UpgradeNetworkJob> m_upgrade_network_job;
 
     // login widget
     ZUserLogin*     login_dlg { nullptr };
 
-    VersionInfo version_info;
-    VersionInfo privacy_version_info;
     static std::string version_display;
     HMSQuery    *hms_query { nullptr };
     FilamentColorCodeQuery* m_filament_color_code_query{ nullptr };
@@ -455,7 +383,6 @@ public:
 
     wxString        transition_tridid(int trid_id) const;
     void            ShowUserGuide();
-    void            ShowDownNetPluginDlg();
     void            ShowUserLogin(bool show = true);
     void            ShowOnlyFilament();
     //BBS
@@ -489,14 +416,7 @@ public:
     bool            m_studio_active = true;
     std::chrono::system_clock::time_point  last_active_point;
 
-    void            check_update(bool show_tips, int by_user);
-    void            check_new_version(bool show_tips = false, int by_user = 0);
-    void            check_new_version_sf(bool show_tips = false, int by_user = 0);
     bool            process_network_msg(std::string dev_id, std::string msg);
-    void            request_new_version(int by_user);
-    void            enter_force_upgrade();
-    void            set_skip_version(bool skip = true);
-    void            no_new_version();
     static std::string format_display_version();
     std::string     format_IP(const std::string& ip);
     void            show_dialog(wxString msg);
@@ -511,11 +431,6 @@ public:
     void            stop_http_server();
     void            switch_staff_pick(bool on);
 
-    void            on_show_check_privacy_dlg(int online_login = 0);
-    void            show_check_privacy_dlg(wxCommandEvent& evt);
-    void            on_check_privacy_update(wxCommandEvent &evt);
-    bool            check_privacy_update();
-    void            check_privacy_version(int online_login = 0);
     void            check_track_enable();
 
     static bool     catch_error(std::function<void()> cb, const std::string& err);
@@ -627,11 +542,8 @@ public:
 
     AppConfig*      app_config{ nullptr };
     PresetBundle*   preset_bundle{ nullptr };
-    PresetUpdater*  preset_updater{ nullptr };
     MainFrame*      mainframe{ nullptr };
     Plater*         plater_{ nullptr };
-
-	PresetUpdater*  get_preset_updater() { return preset_updater; }
 
     Notebook*       tab_panel() const ;
     int             extruders_cnt() const;
@@ -686,30 +598,18 @@ public:
     // URL download - PrusaSlicer gets system call to open prusaslicer:// URL which should contain address of download
     void            start_download(std::string url);
 
-    std::string     get_plugin_url(std::string name, std::string country_code);
-    int             download_plugin(std::string name, std::string package_name, InstallProgressFn pro_fn = nullptr, WasCancelledFn cancel_fn = nullptr);
-    int             install_plugin(std::string name, std::string package_name, InstallProgressFn pro_fn = nullptr, WasCancelledFn cancel_fn = nullptr);
     std::string     get_http_url(std::string country_code, std::string path = {});
     std::string     get_model_http_url(std::string country_code);
     bool            is_compatibility_version();
     bool            check_networking_version();
     void            cancel_networking_install();
     void            restart_networking();
-    void            check_config_updates_from_updater() { check_updates(false); }
-
-    void            show_network_plugin_download_dialog(bool is_update = false);
-    bool            hot_reload_network_plugin();
-    std::string     get_latest_network_version() const;
-    bool            has_network_update_available() const;
 
 private:
-    int             updating_bambu_networking();
     bool            on_init_inner();
-    void            copy_network_if_available();
     bool            on_init_network(bool try_backup = false);
     void            init_networking_callbacks();
     void            init_app_config();
-    void            remove_old_networking_plugins();
     void            drain_pending_events(int timeout_ms);
     bool            wait_for_network_idle(int timeout_ms);
     //BBS set extra header for http request
@@ -725,7 +625,6 @@ private:
     bool            select_language();
 
     bool            config_wizard_startup();
-	void            check_updates(const bool verbose);
 
     // select or add MachineObject
     void            select_machine(const std::string& agent_id);
@@ -734,7 +633,6 @@ private:
     bool                    m_datadir_redefined { false };
     std::string             m_older_data_dir_path;
     bool                    m_unsigned_plugin_warning_shown { false };
-    boost::optional<Semver> m_last_config_version;
     bool                    m_config_corrupted { false };
     std::string             m_open_method;
 };

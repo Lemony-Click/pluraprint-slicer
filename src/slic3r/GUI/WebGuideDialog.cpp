@@ -479,9 +479,6 @@ void GuideFrame::OnScriptMessage(wxWebViewEvent &evt)
 
             this->EndModal(wxID_OK);
 
-            if (InstallNetplugin)
-                GUI::wxGetApp().CallAfter([this] { GUI::wxGetApp().ShowDownNetPluginDlg(); });
-
             if (bLogin)
                 GUI::wxGetApp().CallAfter([this] { login(); });
         }
@@ -702,7 +699,7 @@ static std::string get_first_added_preset(const std::map<std::string, std::strin
     return *diff.begin();
 }
 
-bool GuideFrame::apply_config(AppConfig *app_config, PresetBundle *preset_bundle, const PresetUpdater *updater, bool& apply_keeped_changes)
+bool GuideFrame::apply_config(AppConfig *app_config, PresetBundle *preset_bundle, bool& apply_keeped_changes)
 {
     const auto enabled_vendors = m_appconfig_new.vendors();
     const auto old_enabled_vendors = app_config->vendors();
@@ -746,9 +743,26 @@ bool GuideFrame::apply_config(AppConfig *app_config, PresetBundle *preset_bundle
 
     if (install_bundles.size() > 0) {
         // Install bundles from resources.
-        // Don't create snapshot - we've already done that above if applicable.
-        if (! updater->install_bundles_rsrc(std::move(install_bundles), false))
-            return false;
+        const auto rsrc_path = fs::path(resources_dir()) / "profiles";
+        const auto vendor_dir_path = fs::path(Slic3r::data_dir()) / PRESET_SYSTEM_DIR;
+        for (const auto &bundle : install_bundles) {
+            auto src_json = (rsrc_path / bundle).replace_extension(".json");
+            auto dst_json = (vendor_dir_path / bundle).replace_extension(".json");
+            if (fs::exists(src_json)) {
+                fs::copy_file(src_json, dst_json, fs::copy_option::overwrite_if_exists);
+            }
+            auto src_dir = rsrc_path / bundle;
+            auto dst_dir = vendor_dir_path / bundle;
+            if (fs::exists(src_dir) && fs::is_directory(src_dir)) {
+                if (fs::exists(dst_dir))
+                    fs::remove_all(dst_dir);
+                fs::create_directories(dst_dir);
+                for (auto &entry : fs::directory_iterator(src_dir)) {
+                    const auto &p = entry.path();
+                    fs::copy_file(p, dst_dir / p.filename(), fs::copy_option::overwrite_if_exists);
+                }
+            }
+        }
     } else {
         BOOST_LOG_TRIVIAL(info) << "No bundles need to be installed from resource directory";
     }
@@ -931,7 +945,7 @@ bool GuideFrame::run()
     if (result == wxID_OK) {
         bool apply_keeped_changes = false;
         BOOST_LOG_TRIVIAL(info) << "GuideFrame returned ok";
-        if (! this->apply_config(app.app_config, app.preset_bundle, app.preset_updater, apply_keeped_changes))
+        if (! this->apply_config(app.app_config, app.preset_bundle, apply_keeped_changes))
             return false;
 
         if (apply_keeped_changes)
@@ -1482,25 +1496,6 @@ bool GuideFrame::LoadFile(std::string jPath, std::string &sContent)
     }
 
     return true;
-}
-
-int GuideFrame::DownloadPlugin()
-{
-    return wxGetApp().download_plugin(
-        "plugins", "network_plugin.zip",
-        [this](int status, int percent, bool& cancel) {
-            return ShowPluginStatus(status, percent, cancel);
-        }
-    , nullptr);
-}
-
-int GuideFrame::InstallPlugin()
-{
-    return wxGetApp().install_plugin("plugins", "network_plugin.zip",
-        [this](int status, int percent, bool &cancel) {
-            return ShowPluginStatus(status, percent, cancel);
-        }
-    );
 }
 
 int GuideFrame::ShowPluginStatus(int status, int percent, bool& cancel)

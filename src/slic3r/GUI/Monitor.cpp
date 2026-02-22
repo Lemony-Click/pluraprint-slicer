@@ -192,9 +192,6 @@ void MonitorPanel::init_tabpanel()
     m_tabpanel->AddPage(m_media_file_panel, _L("Storage"), "", false);
     //m_tabpanel->AddPage(m_media_file_panel, _L("Internal Storage"), "", false);
 
-    m_upgrade_panel = new UpgradePanel(m_tabpanel);
-    m_tabpanel->AddPage(m_upgrade_panel, _CTX(L_CONTEXT("Update", "Firmware"), "Firmware"), "", false);
-
     m_hms_panel = new HMSPanel(m_tabpanel);
     m_tabpanel->AddPage(m_hms_panel, _L("Assistant(HMS)"),    "", false);
 
@@ -236,7 +233,6 @@ wxWindow* MonitorPanel::create_side_tools()
 void MonitorPanel::on_sys_color_changed()
 {
     m_status_info_panel->on_sys_color_changed();
-    m_upgrade_panel->on_sys_color_changed();
     m_media_file_panel->Rescale();
 }
 
@@ -250,7 +246,6 @@ void MonitorPanel::msw_rescale()
     //m_status_add_machine_panel->msw_rescale();
     m_status_info_panel->msw_rescale();
     m_media_file_panel->Rescale();
-    m_upgrade_panel->msw_rescale();
     m_hms_panel->msw_rescale();
 
     Layout();
@@ -378,8 +373,6 @@ void MonitorPanel::update_all()
             m_status_info_panel->m_media_play_ctrl->SetMachineObject(obj);
             m_status_info_panel->update(obj);
         }
-    } else if (current_page == m_upgrade_panel) {
-        m_upgrade_panel->update(obj);
     } else if (current_page == m_media_file_panel) {
         m_media_file_panel->UpdateByObj(obj);
     }
@@ -467,7 +460,6 @@ void MonitorPanel::show_status(int status)
     if (m_side_tools) { m_side_tools->show_status(status); };
     m_status_info_panel->show_status(status);
     m_hms_panel->show_status(status);
-    m_upgrade_panel->show_status(status);
 
     if ((status & (int)MonitorStatus::MONITOR_NO_PRINTER) != 0) {
         set_default();

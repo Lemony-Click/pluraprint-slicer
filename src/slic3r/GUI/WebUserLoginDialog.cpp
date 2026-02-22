@@ -59,14 +59,7 @@ ZUserLogin::ZUserLogin() : wxDialog((wxWindow *) (wxGetApp().mainframe), wxID_AN
         m_message->SetForegroundColour(*wxBLACK);
         m_message->Wrap(FromDIP(360));
 
-        // ORCA standardized HyperLink
-        auto m_download_hyperlink = new HyperLink(this, _L("Click here to download it."));
-        m_download_hyperlink->Bind(wxEVT_LEFT_DOWN, [this](wxMouseEvent& event) {
-            this->Close();
-            wxGetApp().ShowDownNetPluginDlg();
-        });
         m_sizer_main->Add(m_message, 0, wxALIGN_CENTER | wxALL, FromDIP(15));
-        m_sizer_main->Add(m_download_hyperlink, 0, wxALIGN_CENTER | wxALL, FromDIP(10));
         m_sizer_main->Add(0, 0, 1, wxBOTTOM, 10);
 
         SetSizer(m_sizer_main);

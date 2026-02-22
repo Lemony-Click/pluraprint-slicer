@@ -6,7 +6,6 @@
 #include "libslic3r/AppConfig.hpp"
 #include "I18N.hpp"
 #include "MsgDialog.hpp"
-#include "DownloadProgressDialog.hpp"
 #include "slic3r/Utils/NetworkAgent.hpp"
 
 
@@ -492,32 +491,8 @@ void MediaPlayCtrl::ToggleStream()
         bool need_install = false;
         if (!start_stream_service(&need_install)) {
             if (!need_install) return;
-            auto res = MessageDialog(this->GetParent(), _L("Virtual Camera Tools is required for this task!\nDo you want to install them?"), _L("Info"),
-                                    wxOK | wxCANCEL).ShowModal();
-            if (res == wxID_OK) {
-                // download tools
-                struct DownloadProgressDialog2 : DownloadProgressDialog
-                {
-                    MediaPlayCtrl *ctrl;
-                    DownloadProgressDialog2(MediaPlayCtrl *ctrl) : DownloadProgressDialog(_L("Downloading Virtual Camera Tools")), ctrl(ctrl) {}
-                    struct UpgradeNetworkJob2 : UpgradeNetworkJob
-                    {
-                        UpgradeNetworkJob2(std::shared_ptr<ProgressIndicator> pri) : UpgradeNetworkJob() {
-                            name         = "cameratools";
-                            package_name = "camera_tools.zip";
-                        }
-                    };
-                    std::shared_ptr<UpgradeNetworkJob> make_job(std::shared_ptr<ProgressIndicator> pri)
-                    { return std::make_shared<UpgradeNetworkJob2>(pri); }
-                    void                               on_finish() override
-                    {
-                        ctrl->CallAfter([ctrl = this->ctrl] { ctrl->ToggleStream(); });
-                        EndModal(wxID_CLOSE);
-                    }
-                };
-                DownloadProgressDialog2 dlg(this);
-                dlg.ShowModal();
-            }
+            auto res = MessageDialog(this->GetParent(), _L("Virtual Camera Tools is required for this task!\nThe required tools are not available."), _L("Info"),
+                                    wxOK).ShowModal();
             return;
         }
     }

@@ -40,8 +40,6 @@ namespace GUI {
 
 wxDEFINE_EVENT(EVT_EJECT_DRIVE_NOTIFICAION_CLICKED, EjectDriveNotificationClickedEvent);
 wxDEFINE_EVENT(EVT_EXPORT_GCODE_NOTIFICAION_CLICKED, ExportGcodeNotificationClickedEvent);
-wxDEFINE_EVENT(EVT_PRESET_UPDATE_AVAILABLE_CLICKED, PresetUpdateAvailableClickedEvent);
-wxDEFINE_EVENT(EVT_PRINTER_CONFIG_UPDATE_AVAILABLE_CLICKED, PrinterConfigUpdateAvailableClickedEvent);
 
 namespace {
 	/* // not used?
@@ -2983,36 +2981,6 @@ void NotificationManager::bbl_close_seqprintinfo_notification()
 {
     for (std::unique_ptr<PopNotification> &notification : m_pop_notifications)
         if (notification->get_type() == NotificationType::BBLSeqPrintInfo) { notification->close(); }
-}
-
-void NotificationManager::bbl_show_plugin_install_notification(const std::string &text)
-{
-    std::string hyper_text;
-    auto callback = [](wxEvtHandler *) {
-        wxCommandEvent *evt = new wxCommandEvent(EVT_INSTALL_PLUGIN_NETWORKING);
-        wxQueueEvent(wxGetApp().plater(), evt);
-        return false;
-    };
-    hyper_text =  _u8L(" Click here to install it.");
-    NotificationData data{NotificationType::BBLPluginInstallHint, NotificationLevel::WarningNotificationLevel, 0, text, hyper_text, callback};
-
-    for (std::unique_ptr<PopNotification> &notification : m_pop_notifications) {
-        if (notification->get_type() == NotificationType::BBLPluginInstallHint) {
-            notification->reinit();
-            notification->update(data);
-            return;
-        }
-    }
-
-    auto notification = std::make_unique<NotificationManager::PopNotification>(data, m_id_provider, m_evt_handler);
-    notification->set_Multiline(true);
-    push_notification_data(std::move(notification), 0);
-}
-
-void NotificationManager::bbl_close_plugin_install_notification()
-{
-    for (std::unique_ptr<PopNotification> &notification : m_pop_notifications)
-        if (notification->get_type() == NotificationType::BBLPluginInstallHint) { notification->close(); }
 }
 
 void NotificationManager::bbl_show_slice_emptylayer_notification(const std::string &text, bool bOverride)

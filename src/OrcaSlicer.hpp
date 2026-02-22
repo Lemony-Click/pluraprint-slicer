@@ -30,7 +30,7 @@ namespace IO {
 #define JSON_ASSEMPLE_OBJECT_POS_Z             "pos_z"
 #define JSON_ASSEMPLE_OBJECT_ASSEMBLE_INDEX    "assemble_index"
 #define JSON_ASSEMPLE_OBJECT_PRINT_PARAMS      "print_params"
-#define JSON_ASSEMPLE_ASSEMBLE_PARAMS         "assembled_params"
+#define JSON_ASSEMPLE_ASSEMBLE_PARAMS          "assembled_params"
 
 
 #define JSON_ASSEMPLE_OBJECT_MIN_Z              "min_z"

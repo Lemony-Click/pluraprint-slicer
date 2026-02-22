@@ -2357,7 +2357,7 @@ static std::string get_first_added_preset(const std::map<std::string, std::strin
     return *diff.begin();
 }
 
-bool ConfigWizard::priv::apply_config(AppConfig *app_config, PresetBundle *preset_bundle, const PresetUpdater *updater, bool& apply_keeped_changes)
+bool ConfigWizard::priv::apply_config(AppConfig *app_config, PresetBundle *preset_bundle, bool& apply_keeped_changes)
 {
     wxString header, caption = _L("Configuration is edited in ConfigWizard");
     const auto enabled_vendors = appconfig_new.vendors();
@@ -2467,9 +2467,26 @@ bool ConfigWizard::priv::apply_config(AppConfig *app_config, PresetBundle *prese
 
     if (install_bundles.size() > 0) {
         // Install bundles from resources.
-        // Don't create snapshot - we've already done that above if applicable.
-        if (! updater->install_bundles_rsrc(std::move(install_bundles), false))
-            return false;
+        const auto rsrc_path = fs::path(resources_dir()) / "profiles";
+        const auto vendor_dir_path = fs::path(Slic3r::data_dir()) / PRESET_SYSTEM_DIR;
+        for (const auto &bundle : install_bundles) {
+            auto src_json = (rsrc_path / bundle).replace_extension(".json");
+            auto dst_json = (vendor_dir_path / bundle).replace_extension(".json");
+            if (fs::exists(src_json)) {
+                fs::copy_file(src_json, dst_json, fs::copy_option::overwrite_if_exists);
+            }
+            auto src_dir = rsrc_path / bundle;
+            auto dst_dir = vendor_dir_path / bundle;
+            if (fs::exists(src_dir) && fs::is_directory(src_dir)) {
+                if (fs::exists(dst_dir))
+                    fs::remove_all(dst_dir);
+                fs::create_directories(dst_dir);
+                for (auto &entry : fs::directory_iterator(src_dir)) {
+                    const auto &p = entry.path();
+                    fs::copy_file(p, dst_dir / p.filename(), fs::copy_option::overwrite_if_exists);
+                }
+            }
+        }
     } else {
         BOOST_LOG_TRIVIAL(info) << "No bundles need to be installed from resources";
     }
@@ -2791,7 +2808,7 @@ bool ConfigWizard::run(RunReason reason, StartPage start_page)
 
     if (ShowModal() == wxID_OK) {
         bool apply_keeped_changes = false;
-        if (! p->apply_config(app.app_config, app.preset_bundle, app.preset_updater, apply_keeped_changes))
+        if (! p->apply_config(app.app_config, app.preset_bundle, apply_keeped_changes))
             return false;
 
         if (apply_keeped_changes)
