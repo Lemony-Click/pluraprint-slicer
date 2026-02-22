@@ -1,39 +1,8 @@
 name: Build all
 
 on:
-  push:
-    branches:
-     - main
-     - release/*
-    paths:
-     - 'deps/**'
-     - 'src/**'
-     - '**/CMakeLists.txt'
-     - 'version.inc'
-     - 'localization/**'
-     - 'resources/**'
-     - ".github/workflows/build_*.yml"
-     - 'scripts/flatpak/**'
-
-  pull_request:
-    branches:
-     - main
-     - release/*
-    paths:
-     - 'deps/**'
-     - 'deps_src/**'
-     - 'src/**'
-     - '**/CMakeLists.txt'
-     - 'version.inc'
-     - ".github/workflows/build_*.yml"
-     - 'build_linux.sh'
-     - 'build_release_vs2022.bat'
-     - 'build_release_macos.sh'
-     - 'scripts/flatpak/**'
-
-
-  schedule:
-      - cron: '0 17 * * *' # run once a day at 1 AM Singapore time (UTC+8)
+  release:
+    types: [published]
 
   workflow_dispatch: # allows for manual dispatch
     inputs:
@@ -51,8 +20,7 @@ jobs:
   build_linux:
     strategy:
       fail-fast: false
-    # Don't run scheduled builds on forks:
-    if: ${{ !cancelled() && (github.event_name != 'schedule' || github.repository == 'OrcaSlicer/OrcaSlicer') }}
+    if: ${{ !cancelled() }}
     uses: ./.github/workflows/build_check_cache.yml
     with:
       os: ubuntu-24.04
@@ -66,14 +34,13 @@ jobs:
           - os: windows-latest
           - os: ${{ vars.SELF_HOSTED && 'orca-macos-arm64' || 'macos-14' }}
             arch: arm64
-    # Don't run scheduled builds on forks:
-    if: ${{ !cancelled() && (github.event_name != 'schedule' || github.repository == 'OrcaSlicer/OrcaSlicer') }}
+    if: ${{ !cancelled() }}
     uses: ./.github/workflows/build_check_cache.yml
     with:
       os: ${{ matrix.os }}
       arch: ${{ matrix.arch }}
       build-deps-only: ${{ inputs.build-deps-only || false }}
-      force-build: ${{ github.event_name == 'schedule' }}
+      force-build: false
     secrets: inherit
   unit_tests:
     name: Unit Tests
@@ -133,7 +100,7 @@ jobs:
           - arch: aarch64
             runner: ubuntu-24.04-arm
     # Don't run scheduled builds on forks:
-    if: ${{ !cancelled() && (github.event_name != 'schedule' || github.repository == 'OrcaSlicer/OrcaSlicer') }}
+    if: ${{ !cancelled() && (github.event_name != 'schedule' || github.repository == 'Lemony-Click/pluraprint-slicer') }}
     runs-on: ${{ matrix.variant.runner }}
     env:
       date:
@@ -161,8 +128,8 @@ jobs:
       shell: bash
     - uses: flatpak/flatpak-github-actions/flatpak-builder@master
       with:
-        bundle: OrcaSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}.flatpak
-        manifest-path: scripts/flatpak/io.github.softfever.OrcaSlicer.yml
+        bundle: PluraprintSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}.flatpak
+        manifest-path: scripts/flatpak/io.github.lemony-click.PluraprintSlicer.yml
         cache: true
         cache-key: flatpak-builder-${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.sha }}
         arch: ${{ matrix.variant.arch }}
@@ -170,15 +137,15 @@ jobs:
     - name: Upload artifacts Flatpak
       uses: actions/upload-artifact@v6
       with:
-        name: OrcaSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}.flatpak
-        path: '/__w/OrcaSlicer/OrcaSlicer/OrcaSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}.flatpak'
+        name: PluraprintSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}.flatpak
+        path: '/__w/Lemony-Click/pluraprint-slicer/PluraprintSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}.flatpak'
     - name: Deploy Flatpak to nightly release
-      if: github.repository == 'OrcaSlicer/OrcaSlicer' && github.ref == 'refs/heads/main'
+      if: github.repository == 'Lemony-Click/pluraprint-slicer' && github.ref == 'refs/heads/main'
       uses: WebFreak001/deploy-nightly@v3.2.0
       with:
-        upload_url: https://uploads.github.com/repos/OrcaSlicer/OrcaSlicer/releases/137995723/assets{?name,label}
+        upload_url: https://uploads.github.com/repos/Lemony-Click/pluraprint-slicer/releases/137995723/assets{?name,label}
         release_id: 137995723
-        asset_path: /__w/OrcaSlicer/OrcaSlicer/OrcaSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}.flatpak
-        asset_name: OrcaSlicer-Linux-flatpak_nightly_${{ matrix.variant.arch }}.flatpak
+        asset_path: /__w/Lemony-Click/pluraprint-slicer/PluraprintSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}.flatpak
+        asset_name: PluraprintSlicer-Linux-flatpak_nightly_${{ matrix.variant.arch }}.flatpak
         asset_content_type: application/octet-stream
         max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
