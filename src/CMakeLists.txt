@@ -247,7 +247,7 @@ else ()
         set(MACOSX_BUNDLE_ICON_FILE Icon.icns)
         set(MACOSX_BUNDLE_BUNDLE_NAME "PluraprintSlicer")
         set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${SoftFever_VERSION})
-        set(MACOSX_BUNDLE_COPYRIGHT "Copyright(C) 2025 Pluraprint. Based on Orca Slicer.")
+        set(MACOSX_BUNDLE_COPYRIGHT "Copyright(C) 2025 Lemony Click, LLC.")
     endif()
     add_custom_command(TARGET PluraprintSlicer POST_BUILD
         COMMAND ln -sfn "${SLIC3R_RESOURCES_DIR}" "${BIN_RESOURCES_DIR}"

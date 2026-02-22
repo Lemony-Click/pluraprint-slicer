@@ -5,7 +5,7 @@
   <key>CFBundleExecutable</key>
   <string>@SLIC3R_APP_KEY@</string>
   <key>CFBundleGetInfoString</key>
-  <string>@SLIC3R_APP_NAME@ Copyright(C) 2025 Pluraprint. Based on Orca Slicer.</string>
+  <string>@SLIC3R_APP_NAME@ Copyright(C) 2025 Lemony Click, LLC.</string>
   <key>CFBundleIconFile</key>
   <string>images/PluraprintSlicer.icns</string>
   <key>CFBundleName</key>
