@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop">
-    <id>io.github.softfever.OrcaSlicer</id>
-    <launchable type="desktop-id">io.github.softfever.OrcaSlicer.desktop</launchable>
+    <id>io.github.pluraprint.PluraprintSlicer</id>
+    <launchable type="desktop-id">io.github.pluraprint.PluraprintSlicer.desktop</launchable>
     <provides>
-        <id>io.github.softfever.OrcaSlicer.desktop</id>
+        <id>io.github.pluraprint.PluraprintSlicer.desktop</id>
     </provides>
-    <name>OrcaSlicer</name>
+    <name>Pluraprint Slicer</name>
     <!-- hehe hadess @ppd 
     ... seriously though, thanks -->
     <summary>Get even more perfect prints!</summary>
-    <developer_name>SoftFever</developer_name>
-    <url type="homepage">https://github.com/OrcaSlicer/OrcaSlicer</url>
-    <url type="help">https://www.orcaslicer.com/wiki</url>
-    <url type="bugtracker">https://github.com/OrcaSlicer/OrcaSlicer/issues/</url>
-    <url type="donation">https://ko-fi.com/SoftFever</url>
+    <developer_name>Lemony-Click</developer_name>
+    <url type="homepage">https://github.com/Lemony-Click/pluraprint-slicer</url>
+    <url type="bugtracker">https://github.com/Lemony-Click/pluraprint-slicer/issues/</url>
     <metadata_license>0BSD</metadata_license>
     <project_license>AGPL-3.0-only</project_license>
     <content_rating type="oars-1.1" />
@@ -26,11 +24,11 @@
     </recommends>
     <screenshots>
         <screenshot type="default">
-            <image>https://raw.githubusercontent.com/OrcaSlicer/OrcaSlicer/main/scripts/flatpak/images/1.png</image>
+            <image>https://raw.githubusercontent.com/Lemony-Click/pluraprint-slicer/main/scripts/flatpak/images/1.png</image>
             <caption>A model ready to be sliced on a buildplate.</caption>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/OrcaSlicer/OrcaSlicer/main/scripts/flatpak/images/2.png</image>
+            <image>https://raw.githubusercontent.com/Lemony-Click/pluraprint-slicer/main/scripts/flatpak/images/2.png</image>
             <caption>A calibration test ready to be printed out.</caption>
         </screenshot>
     </screenshots>
@@ -41,9 +39,9 @@
         <color type="primary" scheme_preference="light">#009688</color>
     </branding>
     <releases>
-        <release version="official"> <url>https://github.com/OrcaSlicer/OrcaSlicer/releases</url>
+        <release version="official"> <url>https://github.com/Lemony-Click/pluraprint-slicer/releases</url>
             <description>
-                <p>Official release: See Help > About Orca Slicer dialog for exact version information.</p>
+                <p>Official release: See Help > About Pluraprint Slicer dialog for exact version information.</p>
             </description>
         </release>
     </releases>

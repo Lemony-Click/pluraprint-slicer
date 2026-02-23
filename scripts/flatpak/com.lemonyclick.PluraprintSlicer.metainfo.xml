@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+    <id>com.lemonyclick.PluraprintSlicer</id>
+    <launchable type="desktop-id">com.lemonyclick.PluraprintSlicer.desktop</launchable>
+    <provides>
+        <id>com.lemonyclick.PluraprintSlicer.desktop</id>
+    </provides>
+    <name>Pluraprint Slicer</name>
+    <!-- hehe hadess @ppd 
+    ... seriously though, thanks -->
+    <summary>Get even more perfect prints!</summary>
+    <developer_name>Lemony-Click</developer_name>
+    <url type="homepage">https://github.com/Lemony-Click/pluraprint-slicer</url>
+    <url type="bugtracker">https://github.com/Lemony-Click/pluraprint-slicer/issues/</url>
+    <metadata_license>0BSD</metadata_license>
+    <project_license>AGPL-3.0-only</project_license>
+    <content_rating type="oars-1.1" />
+    <requires>
+        <display_length compare="gt">768</display_length>
+    </requires>
+    <recommends>
+        <control>keyboard</control>
+        <control>pointing</control>
+    </recommends>
+    <screenshots>
+        <screenshot type="default">
+            <image>https://raw.githubusercontent.com/Lemony-Click/pluraprint-slicer/main/scripts/flatpak/images/1.png</image>
+            <caption>A model ready to be sliced on a buildplate.</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/Lemony-Click/pluraprint-slicer/main/scripts/flatpak/images/2.png</image>
+            <caption>A calibration test ready to be printed out.</caption>
+        </screenshot>
+    </screenshots>
+    <description>
+        <p>A powerful, free and open-source 3D printer slicer that features cutting-edge technology.</p>
+    </description>
+    <branding>
+        <color type="primary" scheme_preference="light">#009688</color>
+    </branding>
+    <releases>
+        <release version="official"> <url>https://github.com/Lemony-Click/pluraprint-slicer/releases</url>
+            <description>
+                <p>Official release: See Help > About Pluraprint Slicer dialog for exact version information.</p>
+            </description>
+        </release>
+    </releases>
+</component>

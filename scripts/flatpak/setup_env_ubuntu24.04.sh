@@ -9,7 +9,7 @@ flatpak install flathub org.gnome.Platform//48 org.gnome.Sdk//48
 ##
 # in PluraprintSlicer folder, run following command to build Orca
 # # First time build
-# flatpak-builder --state-dir=.flatpak-builder --keep-build-dirs --user --force-clean build-dir scripts/flatpak/io.github.softfever.PluraprintSlicer.yml
+# flatpak-builder --state-dir=.flatpak-builder --keep-build-dirs --user --force-clean build-dir scripts/flatpak/com.lemonyclick.PluraprintSlicer.yml
 
 # # Subsequent builds (only rebuilding PluraprintSlicer)
-# flatpak-builder --state-dir=.flatpak-builder --keep-build-dirs --user build-dir scripts/flatpak/io.github.softfever.PluraprintSlicer.yml --build-only=PluraprintSlicer
+# flatpak-builder --state-dir=.flatpak-builder --keep-build-dirs --user build-dir scripts/flatpak/com.lemonyclick.PluraprintSlicer.yml --build-only=PluraprintSlicer

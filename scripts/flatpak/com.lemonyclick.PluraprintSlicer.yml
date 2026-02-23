@@ -1,4 +1,4 @@
-app-id: io.github.pluraprint.PluraprintSlicer
+app-id: com.lemonyclick.PluraprintSlicer
 runtime: org.gnome.Platform
 runtime-version: "48"
 sdk: org.gnome.Sdk
@@ -16,7 +16,7 @@ finish-args:
   - --filesystem=/media
   - --filesystem=/run/spnav.sock:ro
   # Allow PluraprintSlicer to talk to other instances
-  - --talk-name=io.github.pluraprint.PluraprintSlicer.InstanceCheck.*
+  - --talk-name=com.lemonyclick.PluraprintSlicer.InstanceCheck.*
   - --system-talk-name=org.freedesktop.UDisks2
   - --env=SPNAV_SOCKET=/run/spnav.sock
 
@@ -153,7 +153,7 @@ modules:
 
       # AppData metainfo for Gnome Software & Co.
       - type: file
-        path: io.github.pluraprint.PluraprintSlicer.metainfo.xml
+        path: com.lemonyclick.PluraprintSlicer.metainfo.xml
 
       # start-up script
       - type: file

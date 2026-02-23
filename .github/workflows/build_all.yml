@@ -129,7 +129,7 @@ jobs:
     - uses: flatpak/flatpak-github-actions/flatpak-builder@master
       with:
         bundle: PluraprintSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}.flatpak
-        manifest-path: scripts/flatpak/io.github.lemony-click.PluraprintSlicer.yml
+        manifest-path: scripts/flatpak/com.lemonyclick.PluraprintSlicer.yml
         cache: true
         cache-key: flatpak-builder-${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.sha }}
         arch: ${{ matrix.variant.arch }}
