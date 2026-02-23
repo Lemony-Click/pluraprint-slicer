@@ -79,28 +79,28 @@ bool Pluraprint::upload(PrintHostUpload upload_data, ProgressFn prorgess_fn, Err
 {
     const char *name = get_name();
 
-    // Step 1: Export full project 3MF (with geometry) to a temp file.
-    // This must be dispatched to the UI thread because export_3mf() uses OpenGL for thumbnails.
-    fs::path project_3mf_path;
-    if (!export_full_project_3mf(project_3mf_path, error_fn)) {
+    // Export a combined 3MF containing full project data (geometry, settings)
+    // AND the embedded sliced GCODE for the active plate.
+    fs::path combined_3mf_path;
+    if (!export_combined_project_3mf(combined_3mf_path, error_fn)) {
         return false;
     }
 
-    BOOST_LOG_TRIVIAL(info) << boost::format("%1%: Full project 3MF exported to: %2%") % name % project_3mf_path.string();
+    BOOST_LOG_TRIVIAL(info) << boost::format("%1%: Combined project+gcode 3MF exported to: %2%") % name % combined_3mf_path.string();
 
-    // Step 2: Upload both files to the single ingest endpoint via multipart/form-data.
-    // The endpoint is: POST {server_url}/api/ingest/pluraprint-slicer-3mf
-    // Fields: "project_file" = 3MF project, "gcode_file" = G-code
+    // Upload the single combined 3MF to the ingest endpoint.
+    // POST {server_url}/api/ingest/pluraprint-slicer-3mf
+    // The archive contains both the editable project (geometry, transforms,
+    // modifiers, settings) and the sliced GCODE — one file, one upload.
     const auto upload_filename = upload_data.upload_path.filename();
     std::string url = make_url("api/ingest/pluraprint-slicer-3mf");
     bool result = true;
 
-    BOOST_LOG_TRIVIAL(info) << boost::format("%1%: Uploading project + gcode to %2%") % name % url;
+    BOOST_LOG_TRIVIAL(info) << boost::format("%1%: Uploading combined 3MF to %2%") % name % url;
 
     auto http = Http::post(std::move(url));
     set_auth(http);
-    http.form_add_file("project_file", project_3mf_path.string(), project_3mf_path.filename().string())
-        .form_add_file("gcode_file", upload_data.source_path.string(), upload_filename.string())
+    http.form_add_file("project_file", combined_3mf_path.string(), upload_filename.string())
         .on_complete([&](std::string body, unsigned status) {
             BOOST_LOG_TRIVIAL(info) << boost::format("%1%: Upload complete: HTTP %2%: %3%") % name % status % body;
         })
@@ -122,25 +122,25 @@ bool Pluraprint::upload(PrintHostUpload upload_data, ProgressFn prorgess_fn, Err
 #endif
         .perform_sync();
 
-    // Clean up the temp project 3MF file.
+    // Clean up the temp combined 3MF file.
     boost::system::error_code ec;
-    fs::remove(project_3mf_path, ec);
+    fs::remove(combined_3mf_path, ec);
     if (ec) {
-        BOOST_LOG_TRIVIAL(warning) << boost::format("%1%: Failed to remove temp project file %2%: %3%")
-            % name % project_3mf_path.string() % ec.message();
+        BOOST_LOG_TRIVIAL(warning) << boost::format("%1%: Failed to remove temp file %2%: %3%")
+            % name % combined_3mf_path.string() % ec.message();
     }
 
     return result;
 }
 
-bool Pluraprint::export_full_project_3mf(fs::path &out_path, ErrorFn error_fn) const
+bool Pluraprint::export_combined_project_3mf(fs::path &out_path, ErrorFn error_fn) const
 {
     const char *name = get_name();
 
-    // Generate a temp file path for the full project 3MF.
-    out_path = fs::temp_directory_path() / fs::unique_path("pluraprint-project-%%%%-%%%%-%%%%-%%%%.3mf");
+    // Generate a temp file path for the combined project+gcode 3MF.
+    out_path = fs::temp_directory_path() / fs::unique_path("pluraprint-combined-%%%%-%%%%-%%%%-%%%%.3mf");
 
-    BOOST_LOG_TRIVIAL(info) << boost::format("%1%: Exporting full project 3MF to: %2%") % name % out_path.string();
+    BOOST_LOG_TRIVIAL(info) << boost::format("%1%: Exporting combined project+gcode 3MF to: %2%") % name % out_path.string();
 
     // export_3mf() must be called on the UI thread because it accesses
     // the Plater, Model, preset bundle, and OpenGL context for thumbnails.
@@ -158,19 +158,26 @@ bool Pluraprint::export_full_project_3mf(fs::path &out_path, ErrorFn error_fn) c
             if (!plater) {
                 export_result = -1;
             } else {
-                // SaveStrategy::Silence — don't update the project filename in the title bar.
+                // SaveStrategy::Silence   — don't update the project filename in the title bar.
                 // SaveStrategy::SplitModel — use production extension format (standard for project saves).
-                // SaveStrategy::ShareMesh — share mesh data between instances for smaller file size.
-                // SaveStrategy::Zip64 — support large files.
-                // NO SkipModel — this ensures full mesh geometry is embedded.
+                // SaveStrategy::ShareMesh  — share mesh data between instances for smaller file size.
+                // SaveStrategy::WithGcode  — embed sliced GCODE for plates that have been sliced.
+                // SaveStrategy::Zip64      — support large files.
+                // NO SkipModel — full mesh geometry is embedded alongside the GCODE.
+                // This produces a single 3MF with:
+                //   3D/3dmodel.model, Metadata/model_settings.config,
+                //   Metadata/project_settings.config, Metadata/slice_info.config,
+                //   Metadata/plate_N.gcode (for sliced plates),
+                //   Metadata/plate_N.json, [Content_Types].xml, _rels, etc.
                 SaveStrategy strategy = SaveStrategy::Silence
                                       | SaveStrategy::SplitModel
                                       | SaveStrategy::ShareMesh
+                                      | SaveStrategy::WithGcode
                                       | SaveStrategy::Zip64;
                 export_result = plater->export_3mf(out_path, strategy, -1 /* all plates */, nullptr);
             }
         } catch (const std::exception &ex) {
-            BOOST_LOG_TRIVIAL(error) << boost::format("%1%: Exception during project export: %2%") % name % ex.what();
+            BOOST_LOG_TRIVIAL(error) << boost::format("%1%: Exception during combined export: %2%") % name % ex.what();
             export_result = -1;
         }
 
@@ -188,8 +195,8 @@ bool Pluraprint::export_full_project_3mf(fs::path &out_path, ErrorFn error_fn) c
     }
 
     if (export_result != 0) {
-        BOOST_LOG_TRIVIAL(error) << boost::format("%1%: Full project 3MF export failed (result=%2%)") % name % export_result;
-        error_fn(_L("Failed to export full project 3MF for Pluraprint upload."));
+        BOOST_LOG_TRIVIAL(error) << boost::format("%1%: Combined 3MF export failed (result=%2%)") % name % export_result;
+        error_fn(_L("Failed to export combined project+gcode 3MF for Pluraprint upload."));
         return false;
     }
 
