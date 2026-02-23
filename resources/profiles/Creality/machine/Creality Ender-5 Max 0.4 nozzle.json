@@ -32,7 +32,7 @@
     "fan_speedup_overhangs": "1",
     "fan_speedup_time": "0",
     "high_current_on_filament_swap": "0",
-    "host_type": "octoprint",
+    "host_type": "pluraprint",
     "machine_LED_light_exist": "1",
     "machine_end_gcode": "G91 ;Relative positionning \nG1 E-2 F2700 ;Retract a bit \nG1 E-2 Z0.2 F2400 ;Retract and raise Z \n \nG1 Z5 ;Raise Z more \nG90 ;Absolute positionning \n \nG1 X395 Y395 F6000 ;Present print \nM106 S0 ;Turn-off fan \nM104 S0 ;Turn-off hotend \nM140 S0 ;Turn-off bed \n \nM84 X Y E ;Disable all steppers but Z",
     "machine_load_filament_time": "11",

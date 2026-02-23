@@ -7,7 +7,7 @@
     "instantiation": "true",
     "printer_model": "SH65 IDRE",
     "default_print_profile": "Performance 150 - 0.15mm",
-    "host_type": "octoprint",
+    "host_type": "pluraprint",
     "print_host": "192.168.0.60",
     "nozzle_diameter": [
         "0.4",

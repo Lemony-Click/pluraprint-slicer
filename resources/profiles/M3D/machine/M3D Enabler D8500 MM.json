@@ -27,7 +27,7 @@
         "0x0"
     ],
     "fan_speedup_time": "1",
-    "host_type": "esp3d",
+    "host_type": "pluraprint",
     "long_retractions_when_cut": [
         "0",
         "0"

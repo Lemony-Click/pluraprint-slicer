@@ -8,7 +8,7 @@
   "nozzle_diameter": [
     "0.4"
   ],
-  "host_type": "elegoolink",
+  "host_type": "pluraprint",
   "printer_model": "Elegoo Centauri Carbon 2",
   "printer_variant": "0.4",
   "auxiliary_fan": "1",

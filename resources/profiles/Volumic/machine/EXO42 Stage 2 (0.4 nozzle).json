@@ -7,7 +7,7 @@
     "instantiation": "true",
     "printer_model": "EXO42 Stage 2",
     "default_print_profile": "Normal speed (Stage 2) - 0.20mm",
-    "host_type": "octoprint",
+    "host_type": "pluraprint",
     "print_host": "192.168.0.60",
     "nozzle_diameter": [
         "0.4"

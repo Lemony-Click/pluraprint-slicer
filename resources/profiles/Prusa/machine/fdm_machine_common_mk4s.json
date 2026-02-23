@@ -17,7 +17,7 @@
     "extruder_clearance_height_to_rod": "14",
     "extruder_clearance_radius": "45",
     "gcode_flavor": "marlin2",
-    "host_type": "prusalink",
+    "host_type": "pluraprint",
     "layer_change_gcode": [
         ";AFTER_LAYER_CHANGE\n;[layer_z]\n{if ! spiral_mode}M74 W[extruded_weight_total]{endif}\n"
     ],

@@ -20,7 +20,7 @@
     "retraction_length": [
         "1.2"
     ],
-    "host_type": "flashforge",
+    "host_type": "pluraprint",
     "machine_max_acceleration_extruding": [
         "5000"
     ],

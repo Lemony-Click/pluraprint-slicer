@@ -24,7 +24,7 @@
         "0x0"
     ],
     "gcode_flavor": "marlin",
-    "host_type": "simplyprint",
+    "host_type": "pluraprint",
     "long_retractions_when_cut": [
         "0",
         "0"

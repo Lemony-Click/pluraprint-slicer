@@ -70,7 +70,7 @@
         "226x256"
     ],
     "high_current_on_filament_swap": "0",
-    "host_type": "octoprint",
+    "host_type": "pluraprint",
     "layer_change_gcode": "; layer num/total_layer_count: {layer_num+1}/[total_layer_count]\n; update layer progress\nM73 L{layer_num+1}\nM991 S0 P{layer_num} ;notify layer change",
     "long_retractions_when_cut": [
         "0"

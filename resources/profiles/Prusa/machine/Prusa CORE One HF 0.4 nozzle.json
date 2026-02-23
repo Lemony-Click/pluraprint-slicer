@@ -19,7 +19,7 @@
     "extruder_clearance_radius": "75",
     "printer_structure": "corexy",
     "gcode_flavor": "marlin2",
-    "host_type": "prusalink",
+    "host_type": "pluraprint",
     "layer_change_gcode": [
         ";AFTER_LAYER_CHANGE\n;[layer_z]"
     ],

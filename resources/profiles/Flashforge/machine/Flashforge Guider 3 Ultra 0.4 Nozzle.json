@@ -40,7 +40,7 @@
     "fan_speedup_time": "0",
     "gcode_flavor": "klipper",
     "high_current_on_filament_swap": "0",
-    "host_type": "octoprint",
+    "host_type": "pluraprint",
     "layer_change_gcode": ";AFTER_LAYER_CHANGE\n;[layer_z]",
     "machine_end_gcode": "G1 E-3 F3600\nG0 X50 Y50 F30000\nM104 S0 T0\nM104 S0 T1",
     "machine_load_filament_time": "0",

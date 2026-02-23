@@ -21,7 +21,7 @@
         "5.0"
     ],
     "auxiliary_fan": "1",
-    "host_type": "flashforge",
+    "host_type": "pluraprint",
     "wipe": [
         "0"
     ]

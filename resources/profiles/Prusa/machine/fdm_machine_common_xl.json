@@ -92,7 +92,7 @@
     "retract_before_wipe": "80%",
     "retract_lift_below": "1.5",
     "z_hop_types": "Auto Lift",
-    "host_type": "prusalink",
+    "host_type": "pluraprint",
     "printable_height": "360",
     "machine_end_gcode": "{if max_layer_z < max_print_height}G1 Z{z_offset+min(max_layer_z+2, max_print_height)} F720{endif} ; Move bed down\nM104 S0 ; turn off temperature\nM140 S0 ; turn off heatbed\nM107 ; turn off fan\nG1 X6 Y350 F6000 ; park\n{if max_layer_z < max_print_height}G1 Z{z_offset+min(max_layer_z+100, max_print_height)} F300{endif} ; Move bed down\nM900 K0 ; reset LA\nM142 S36 ; reset heatbreak target temp\nM221 S100 ; reset flow percentage\nM84 ; disable motors\n; max_layer_z = [max_layer_z]",
     "machine_pause_gcode": "M601",
