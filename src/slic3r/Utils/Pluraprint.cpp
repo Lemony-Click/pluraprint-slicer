@@ -41,7 +41,7 @@ bool Pluraprint::test(wxString &msg) const
     // The Pluraprint server should respond to the base URL or a health endpoint.
     const char *name = get_name();
     bool res = true;
-    auto url = make_url("api/ingest/orca-3mf");
+    auto url = make_url("api/ingest/pluraprint-slicer-3mf");
 
     BOOST_LOG_TRIVIAL(info) << boost::format("%1%: Testing connection at: %2%") % name % url;
 
@@ -89,10 +89,10 @@ bool Pluraprint::upload(PrintHostUpload upload_data, ProgressFn prorgess_fn, Err
     BOOST_LOG_TRIVIAL(info) << boost::format("%1%: Full project 3MF exported to: %2%") % name % project_3mf_path.string();
 
     // Step 2: Upload both files to the single ingest endpoint via multipart/form-data.
-    // The endpoint is: POST {server_url}/api/ingest/orca-3mf
+    // The endpoint is: POST {server_url}/api/ingest/pluraprint-slicer-3mf
     // Fields: "project_file" = 3MF project, "gcode_file" = G-code
     const auto upload_filename = upload_data.upload_path.filename();
-    std::string url = make_url("api/ingest/orca-3mf");
+    std::string url = make_url("api/ingest/pluraprint-slicer-3mf");
     bool result = true;
 
     BOOST_LOG_TRIVIAL(info) << boost::format("%1%: Uploading project + gcode to %2%") % name % url;
